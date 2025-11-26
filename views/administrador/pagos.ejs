@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Panel de administración para gestionar usuarios y configuraciones">
+    <title>ConVivir - Administración</title>
+    <link rel="stylesheet" href="../css/admin.css">
+    <link rel="stylesheet" href="../css/pagos.css">
+    <link rel="shortcut icon" href="../img/LOGO.png" type="image/x-icon">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+</head>
+<body>
+    <div class="layout">
+        <aside class="sidebar" aria-label="Menú lateral">
+            <div class="sidebar-header">
+                <a href="/admin">
+                    <div class="logo">Admin<span>Panel</span></div>
+                </a>
+                <button class="sidebar-toggle" aria-label="Ocultar menú" aria-expanded="true">
+                    <i class="fas fa-bars"></i>
+                </button>
+            </div>
+            <nav>
+                <ul>
+                    <li>
+                        <a href="/admin">
+                            <i class="fas fa-home"></i>
+                            <span>Inicio</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="/admin/user_admin">
+                            <i class="fas fa-users"></i>
+                            <span>Usuarios</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="/admin/pagos">
+                            <i class="fas fa-money-bill-wave"></i>
+                            <span>Pagos</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="/admin/estadisticas">
+                            <i class="fas fa-chart-bar"></i>
+                            <span>Estadísticas</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="/admin/proveedores">
+                            <i class="fas fa-truck"></i>
+                            <span>Proveedores</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="/admin/avisos">
+                            <i class="fas fa-bullhorn"></i>
+                            <span>Avisos</span>
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+            <div class="salir">
+                <a href="/">
+                    <i class="fas fa-sign-out-alt"></i>
+                    <span>Salir</span>
+                </a>
+            </div>
+        </aside>
+
+        <div class="main-content">
+            <!-- Header -->
+            <header class="navbar" aria-label="Menú principal">
+                <div class="navbar-left">
+                    <button class="menu-toggle" aria-label="Mostrar menú">
+                        <i class="fas fa-bars"></i>
+                    </button>
+                    <h1>Pagos <i class="fa fa-money-bill-wave"></i></h1>
+                </div>
+                <div class="navbar-right">
+                    <div class="user-profile">
+                        <i class="fas fa-user-shield"></i>
+                        <span class="username">Administrador</span>
+                    </div>
+                </div>
+            </header>
+            <main class="payments-container">
+                <!-- Resumen de Pagos -->
+                <section class="summary-grid">
+                    <%
+                        let totalPagos = 0;
+                        pagos.forEach(function(pago) {
+                            totalPagos += Number(pago.monto_pago) || 0;
+                        });
+                        // Formatear el totalPagos con separación de miles y decimales
+                        let PagosT = totalPagos.toLocaleString('de-DE', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+                    %>
+                    <div class="summary-card total">
+                        <div class="summary-title">Monto Total Bs</div>
+                        <div class="summary-amount"><%= PagosT %>Bs</div>
+                    </div>
+                    <div class="summary-card pending">
+                        <div class="summary-title">Precio del dolar</div>
+                        <div class="summary-amount">
+                            <input type="number" name="precio-dolar" id="precio-dolar" step="0.01" min="0">
+                            <button type="button" id="aceptar-precio">Aceptar</button>
+                            <p id="mostrar-precio"></p>
+                        </div>
+                    </div>
+                    <div class="summary-card pending">
+                        <div class="summary-title">Monto Total USD</div>
+                        <div class="summary-amount" id="total-usd">0 $</div>
+                    </div>
+                </section>
+                <!-- Filtros -->
+                <section class="filters-section">
+                    <div class="filters-row">
+                        <div class="filter-group search-box">
+                            <label>Buscar</label>
+                            <input type="text" id="search-input" placeholder="Buscar por Cedula o Referencia...">
+                        </div>
+                        <div class="filter-group">
+                            <label>Método de Pago</label>
+                            <select id="metodo-select">
+                                <option value="">Todos</option>
+                                <option value="Efectivo">Efectivo</option>
+                                <option value="Transferencia">Transferencia Bancaria</option>
+                                <option value="Pago_Movil">Pago Móvil</option>
+                                <option value="zelle">Zelle</option>
+                                <option value="paypal">PayPal</option>
+                                <option value="Binance">Binance</option>
+                                <option value="Binance">Zinli</option>
+                            </select>
+                        </div>
+                        <div class="filter-group">
+                            <label>Desde</label>
+                            <input type="date" id="desde-input">
+                        </div>
+                        <div class="filter-group">
+                            <label>Hasta</label>
+                            <input type="date" id="hasta-input">
+                        </div>
+                        <div class="filter-group">
+                            <label>Torre</label>
+                            <select name="edi" id="edi">
+                                <option value="">Seleccione una opción</option>
+                                <option value="A">Torre A</option>
+                                <option value="B">Torre B</option>
+                                <option value="C">Torre C</option>
+                                <option value="D">Torre D</option>
+                            </select>
+                        </div>
+                        <div class="filter-group">
+                            <button class="btn-buscar" id="filtrar-btn"><i class="fas fa-search"></i>Filtrar</button>
+                            <button class="btn-limpiar" id="limpiar-btn"><i class="fas fa-eraser"></i> Limpiar</button>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Tabla de Pagos -->
+                <section class="payments-table-section">
+                    <div class="table-header">
+                        <div class="table-title">Historial de Pagos</div>
+                        <div class="table-actions">
+                            <button class="btn-secondary" id="export-excel">
+                                <i class="fas fa-file-excel"></i> Excel
+                            </button>
+                            <button class="btn-secondary" id="export-pdf">
+                                <i class="fas fa-file-pdf"></i> PDF
+                            </button>
+                        </div>
+                    </div>
+                    <table class="payments-table">
+                        <thead>
+                            <tr>
+                                <th>N° Referencia</th>
+                                <th>Residente</th>
+                                <th>Cedula</th>
+                                <th>Fecha</th>
+                                <th>Monto</th>
+                                <th>Método</th>
+                                <th>Banco Emisor</th>
+                                <th>Torre</th>
+                                <th>Apartamento</th>
+                                <th>Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <% if(pagos.length > 0){ %>
+                                <% pagos.forEach(function(pago){  %>
+                                <tr>
+                                    <td><%= pago.num_referencia %></td>
+                                    <th><%= pago.nombre_p %></th>
+                                    <th><%= pago.cedula %></th>
+                                    <th><%= pago.fecha_pago ? new Date(pago.fecha_pago).toLocaleDateString('es-ES') : '' %></th>
+                                    <th><%= Number(pago.monto_pago).toLocaleString('de-DE', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) %> Bs</th>
+                                    <th><%= pago.tipo_pago %></th>
+                                    <th><%= pago.bancoEmisor %></th>
+                                    <th><%= pago.Torre %></th>
+                                    <th><%= pago.apartamento%></th>
+                                    
+                                    <td>
+                                    <div class="actions-cell">
+                                        <button class="btn-secondary generar_factura" title="Factura">
+                                            <i class="fas fa-file-invoice"></i>
+                                        </button>
+                                        <button class="btn-secondary dele_Pago" title="Eliminar">
+                                            <a href="#" 
+                                                class="fa fa-trash" title="Eliminar" onclick="eliminarPago('<%= pago.id_pago %>'); return false;">
+                                            </a>
+                                        </button>
+                                    </div>
+                                </td>
+                                </tr>
+                                <% }); %>
+                            <% } else { %>
+                                <tr>
+                                    <td colspan="10">No hay pagoss registrados.</td>
+                                </tr>
+                            <% } %>
+                        </tbody>
+                    </table>
+                </section>
+            </main>
+        </div>
+    </div>
+    <script src="../js/script.js"></script>
+    <script src="../js/pagos.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="../js/facturaCreate.js"></script>
+    <script>
+        document.getElementById('aceptar-precio').addEventListener('click', function() {
+            const precioDolar = parseFloat(document.getElementById('precio-dolar').value);
+            const totalBs = '<%= totalPagos %>';
+            if (precioDolar > 0) {
+                const totalUsd = totalBs / precioDolar;
+                const totalUsdFormatted = totalUsd.toLocaleString('de-DE', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+                document.getElementById('total-usd').textContent = totalUsdFormatted + ' $';
+                document.getElementById('mostrar-precio').textContent = 'Precio actual: ' + precioDolar.toLocaleString('de-DE', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + ' Bs/$';
+            } else {
+                alert('Por favor ingrese un precio del dólar válido');
+            }
+        });
+        
+        document.getElementById('precio-dolar').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                document.getElementById('aceptar-precio').click();
+            }
+        });
+
+        const torreSelect = document.getElementById('edi');
+        const pagosTable = document.querySelector('.payments-table');
+        function buscarPorTorre() {
+        const torreSeleccionada = torreSelect.value;
+
+        // Filtrar la tabla de pagos según la torre seleccionada
+        const filas = pagosTable.querySelectorAll('tr');
+        filas.forEach((fila) => {
+            const torre = fila.querySelector('th:nth-child(8)').textContent;
+            if (torre !== torreSeleccionada && torreSeleccionada !== '') {
+            fila.style.display = 'none';
+            } else {
+            fila.style.display = '';
+            }
+        });
+        }
+
+        torreSelect.addEventListener('change', buscarPorTorre);
+    </script>
+</body>
+</html>

@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Panel de administración para gestionar usuarios y configuraciones">
+    <title>Olimpos</title>
+    <link rel="stylesheet" href="./css/login.css">
+    <link rel="shortcut icon" href="./img/LOGO.png" type="image/x-icon">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+</head>
+<body>
+    <div class="login-container" >
+        <div class="login-header">
+            <img src="./img/LOGO.png" alt="Logo ConVivir" class="logo">
+            <h1>Olimpos</h1>
+            <p>Sistema de Gestión de Clientes</p>
+        </div>
+        <% if (typeof mensaje != 'undefined') { %>
+            <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+            <script>
+                Swal.fire({
+                    icon: 'info',
+                    title: 'Información',
+                    text: '<%= mensaje %>',
+                    confirmButtonText: 'Aceptar'
+                });
+            </script>
+        <% } %>
+        <form class="login-form" id="loginForm" action="/codLogin" method="post">
+            <div class="form-group">
+                <label for="username">
+                    <i class="fas fa-user"></i> 
+                    Usuario
+                </label>
+                <input type="text" id="user" name="user" placeholder="Ingrese su Usuario" >
+            </div>
+            
+            <div class="form-group">
+                <label for="password">
+                    <i class="fas fa-lock"></i> 
+                    Contraseña
+                </label>
+                <input type="password" id="pass" name="pass" placeholder="Ingrese su contraseña">
+                <button type="button" class="toggle-password" onclick="togglePassword('clave')"><i class="fas fa-eye"></i></button>
+            </div>
+            <button type="submit" class="register-btn" id="init">Iniciar Sesion</button>
+            <div class="auth-footer">
+                <p><a href="/recuperar">Recuperar contraseña</a></p>
+                <p>¿No tienes cuenta? <a href="/regis.html">Regístrate aquí</a></p>
+                <p><a href="/">← Volver al inicio</a></p>
+            </div>
+        </form>
+        <div class="login-footer">
+            <a href="https://wa.me/+584145003573?text=Hola soporte Olimpos, necesito ayuda con el Sistema de Olimpos" target="_blank"><p><i class="fas fa-phone-alt"></i> Soporte</p></a>
+            <p><i class="far fa-copyright"></i> <%= new Date().getFullYear() %> Sistema de Gestión de Hospedaje</p>
+        </div>
+    </div>
+    <div id="loading" class="loading hidden">
+        <div class="loading-spinner"></div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="js/loginBT.js"></script>
+    <script>
+        document.getElementById('user').addEventListener('input', function() {
+            this.value = this.value.replace(/[^a-zA-Z0-9]/g, '');
+        });
+    </script>
+</body>
+</html>

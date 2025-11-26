@@ -1,0 +1,42 @@
+<%- include('../partials/header') %>
+<%- include('../partials/sidebar_super') %>
+<%- include('../partials/navbar', { titulo: 'Hoteles', icono: 'fa-hotel', usuario }) %>
+
+<main class="content">
+  <section class="agg">
+    <form method="POST" action="/super/hoteles/registrar">
+      <input name="nombre" placeholder="Nombre" required>
+      <input name="direccion" placeholder="Dirección">
+      <input name="telefono" placeholder="Teléfono">
+      <input name="email" placeholder="Email">
+      <input name="fecha_registro" type="date" required>
+      <button type="submit">Registrar Hotel</button>
+    </form>
+  </section>
+
+  <section class="crud">
+    <table>
+      <thead><tr><th>ID</th><th>Nombre</th><th>Dirección</th><th>Teléfono</th><th>Email</th><th>Fecha</th><th>Acciones</th></tr></thead>
+      <tbody>
+        <% hoteles.forEach(h => { %>
+          <tr>
+            <td><%= h.id_hotel %></td>
+            <td><%= h.nombre %></td>
+            <td><%= h.direccion %></td>
+            <td><%= h.telefono %></td>
+            <td><%= h.email %></td>
+            <td><%= h.fecha_registro %></td>
+            <td><a href="#" onclick="eliminarHotel('<%= h.id_hotel %>')">🗑️</a></td>
+          </tr>
+        <% }) %>
+      </tbody>
+    </table>
+  </section>
+</main>
+
+<script>
+function eliminarHotel(id) {
+  fetch('/super/eliminarHotel/' + id).then(() => location.reload());
+}
+</script>
+<%- include('../partials/footer') %>

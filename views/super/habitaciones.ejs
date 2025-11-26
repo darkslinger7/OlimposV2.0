@@ -1,0 +1,68 @@
+<%- include('../partials/header') %>
+<%- include('../partials/sidebar_super') %>
+<%- include('../partials/navbar', { titulo: 'Habitaciones', icono: 'fa-bed', usuario }) %>
+
+<main class="content">
+  <section class="agg">
+    <form method="POST" action="/super/habitaciones/registrar">
+      <input name="numero" placeholder="Número" required>
+      <input name="tipo" placeholder="Tipo">
+      <input name="capacidad" type="number" placeholder="Capacidad">
+      <input name="precio" type="number" step="0.01" placeholder="Precio">
+      <select name="estado">
+        <option value="disponible">Disponible</option>
+        <option value="ocupada">Ocupada</option>
+        <option value="mantenimiento">Mantenimiento</option>
+      </select>
+      <select name="hotel" required>
+        <% hoteles.forEach(h => { %>
+          <option value="<%= h.id_hotel %>"><%= h.nombre %></option>
+        <% }) %>
+      </select>
+      <label><input type="checkbox" name="tiene_televisor" value="1"> Televisor</label>
+      <label><input type="checkbox" name="tiene_wifi" value="1"> Wi-Fi</label>
+      <label><input type="checkbox" name="tiene_jacuzzi" value="1"> Jacuzzi</label>
+      <label><input type="checkbox" name="tiene_aire" value="1"> Aire acondicionado</label>
+      <label><input type="checkbox" name="tiene_minibar" value="1"> Minibar</label>
+      <button type="submit">Registrar Habitación</button>
+    </form>
+  </section>
+
+  <section class="crud">
+    <table>
+      <thead>
+        <tr>
+          <th>ID</th><th>Número</th><th>Tipo</th><th>Capacidad</th><th>Precio</th><th>Estado</th>
+          <th>Hotel</th><th>TV</th><th>Wi-Fi</th><th>Jacuzzi</th><th>Aire</th><th>Minibar</th><th>Acciones</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% habitaciones.forEach(h => { %>
+          <tr>
+            <td><%= h.id_habitacion %></td>
+            <td><%= h.numero %></td>
+            <td><%= h.tipo %></td>
+            <td><%= h.capacidad %></td>
+            <td><%= h.precio %></td>
+            <td><%= h.estado %></td>
+            <td><%= h.hotel_nombre %></td>
+            <td><%= h.tiene_televisor ? '📺' : '—' %></td>
+            <td><%= h.tiene_wifi ? '📶' : '—' %></td>
+            <td><%= h.tiene_jacuzzi ? '🛁' : '—' %></td>
+            <td><%= h.tiene_aire ? '❄️' : '—' %></td>
+            <td><%= h.tiene_minibar ? '🍹' : '—' %></td>
+            <td><a href="#" onclick="eliminarHabitacion('<%= h.id_habitacion %>')">🗑️</a></td>
+          </tr>
+        <% }) %>
+      </tbody>
+    </table>
+  </section>
+</main>
+
+<script>
+function eliminarHabitacion(id) {
+  fetch('/super/eliminarHabitacion/' + id).then(() => location.reload());
+}
+</script>
+
+<%- include('../partials/footer') %>

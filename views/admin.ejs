@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Olimpos - Panel</title>
+  <link rel="stylesheet" href="/css/admin.css">
+  <link rel="shortcut icon" href="/img/LOGO.png" type="image/x-icon">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+
+<% console.log("usuario:", usuario); %>
+
+<body>
+  <div class="layout">
+    <% if (usuario.id_cargo === 1) { %>
+        <%- include('partials/sidebar_super', { usuario: usuario }) %>
+    <% } else if (usuario.id_cargo === 2 || usuario.id_cargo === 3) { %>
+        <%- include('partials/sidebar_trabajador', { usuario: usuario }) %>
+    <% } else if (usuario.id_cargo === 4) { %>
+        <%- include('partials/sidebar_cliente', { usuario: usuario }) %>
+    <% } %>
+
+    <div class="main-content">
+      <%- include('partials/header', { usuario: usuario }) %>
+
+
+      <main class="content-admin" style="margin-top: 80px; margin-bottom: 240px;">
+        <div class="admin-card">
+          <img src="/img/LOGO.png" alt="Logo de ConVivir" class="admin-logo">
+          <h1 class="titulo-admin">Bienvenido al Panel</h1>
+          <p class="descripcion-admin">Desde aquí puedes gestionar tus módulos según tu rol.</p>
+
+          <% if (usuario.id_cargo === 1) { %>
+            <div class="botones-admin">
+              <a href="/admin/user_admin" class="btn-admin btn-primario">
+                <i class="fas fa-users"></i> Ir a Usuarios
+              </a>
+              <a href="/admin/avisos" class="btn-admin btn-secundario">
+                <i class="fas fa-bullhorn"></i> Ver Avisos
+              </a>
+            </div>
+          <% } else if (usuario.id_cargo === 2 || usuario.id_cargo === 3) { %>
+            <div class="botones-admin">
+              <a href="/admin/pagos" class="btn-admin btn-primario">
+                <i class="fas fa-money-bill-wave"></i> Pagos
+              </a>
+              <a href="/admin/estadisticas" class="btn-admin btn-secundario">
+                <i class="fas fa-chart-bar"></i> Estadísticas
+              </a>
+            </div>
+          <% } else if (usuario.id_cargo === 4) { %>
+            <div class="botones-admin">
+              <a href="/cliente/habitacion" class="btn-admin btn-primario">
+                <i class="fas fa-door-open"></i> Mi habitación
+              </a>
+              <a href="/cliente/pagos" class="btn-admin btn-secundario">
+                <i class="fas fa-money-check-alt"></i> Mis pagos
+              </a>
+            </div>
+          <% } %>
+        </div>
+      </main>
+
+      <%- include('partials/footer') %>
+    </div>
+  </div>
+  <script src="/js/script.js"></script>
+</body>
+</html>

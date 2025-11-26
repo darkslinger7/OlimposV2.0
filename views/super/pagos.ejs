@@ -1,0 +1,42 @@
+<%- include('../partials/header') %>
+<%- include('../partials/sidebar_super') %>
+<%- include('../partials/navbar', { titulo: 'Pagos a Administradores', icono: 'fa-money-check-alt', usuario }) %>
+
+<main class="content">
+  <section class="crud">
+    <h2>Pagos pendientes por hotel</h2>
+    <table>
+      <thead>
+        <tr>
+          <th>Hotel</th>
+          <th>Administrador</th>
+          <th>Sueldo Admin</th>
+          <th>Sueldos Trabajadores</th>
+          <th>Total a Transferir</th>
+          <th>Acción</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% pagos.forEach(p => { %>
+          <tr>
+            <td><%= p.hotel %></td>
+            <td><%= p.administrador %></td>
+            <td>$<%= p.sueldo_admin %></td>
+            <td>$<%= p.sueldos_trabajadores %></td>
+            <td><strong>$<%= p.total_pago %></strong></td>
+            <td>
+              <form method="POST" action="/super/pagos/registrar">
+                <input type="hidden" name="id_hotel" value="<%= p.id_hotel %>">
+                <input type="hidden" name="id_admin" value="<%= p.id_admin %>">
+                <input type="hidden" name="monto" value="<%= p.total_pago %>">
+                <button type="submit">Registrar pago</button>
+              </form>
+            </td>
+          </tr>
+        <% }) %>
+      </tbody>
+    </table>
+  </section>
+</main>
+
+<%- include('../partials/footer') %>

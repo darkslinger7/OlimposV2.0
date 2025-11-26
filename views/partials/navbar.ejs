@@ -1,0 +1,19 @@
+<header class="navbar" aria-label="Menú principal">
+  <div class="navbar-left">
+    <button class="menu-toggle" aria-label="Mostrar menú">
+      <i class="fas fa-bars"></i>
+    </button>
+    <h1><%= titulo %></h1>
+  </div>
+  <div class="navbar-right">
+    <div class="user-profile">
+      <i class="fas fa-user-shield"></i>
+      <span class="username">
+        <%= usuario.id_cargo === 1 ? 'Superusuario' :
+            usuario.id_cargo === 2 ? 'Administrador' :
+            usuario.id_cargo === 3 ? 'Trabajador' :
+            usuario.id_cargo === 4 ? 'Cliente' : 'Usuario' %>
+      </span>
+    </div>
+  </div>
+</header>

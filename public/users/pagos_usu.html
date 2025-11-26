@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Panel de administración para gestionar usuarios y configuraciones">
+    <title>ConVivir - Usuarios</title>
+    <link rel="stylesheet" href="/css/admin.css">
+    <link rel="stylesheet" href="/css/pagos_user.css">
+    <link rel="shortcut icon" href="../img/LOGO.png" type="image/x-icon">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        .error-message {
+            color: #e63946;
+            font-size: 0.875rem;
+            display: none;
+            margin-top: 0.25rem;
+        }
+        .error-message.show {
+            display: block;
+        }
+        input.error, select.error {
+            border-color: #e63946;
+        }
+    </style>
+</head>
+<body>
+    <div class="layout">
+        <aside class="sidebar" aria-label="Menú lateral">
+            <div class="sidebar-header">
+                <a href="/users"><div class="logo">User<span>Panel</span></div></a>
+                <button class="sidebar-toggle" aria-label="Ocultar menú" aria-expanded="true">
+                    <i class="fas fa-bars"></i>
+                </button>
+            </div>
+            <nav>
+                <ul>
+                    <li><a href="/users"><i class="fas fa-home"></i><span>Inicio</span></a></li>
+                    <li><a href="./pagos_usu.html"><i class="fas fa-money-bill-wave"></i><span>Pagos</span></a></li>
+                    <li><a href="/users/avisos_users"><i class="fas fa-bullhorn"></i><span>Avisos</span></a></li>
+                </ul>
+            </nav>
+            <div class="salir">
+                <a href="/"><i class="fas fa-sign-out-alt"></i><span>Salir</span></a>
+            </div>
+        </aside>
+
+        <div class="main-content">
+            <header class="navbar" aria-label="Menú principal">
+                <div class="navbar-left">
+                    <button class="menu-toggle" aria-label="Mostrar menú"><i class="fas fa-bars"></i></button>
+                    <h1>Pagos <i class="fa fa-money-bill-wave"></i></h1>
+                </div>
+                <div class="navbar-right">
+                    <div class="user-profile">
+                        <i class="fas fa-user"></i>
+                        <span class="username">Usuario</span>
+                    </div>
+                </div>
+            </header>
+
+            <main class="content">
+                <form id="paymentForm" action="/aggPagos" method="post" autocomplete="off">
+                    <div class="form-group">
+                        <label for="referencia">Número de Referencia *</label>
+                        <input type="text" id="referencia" name="referencia" placeholder="Últimos 6 dígitos de la referencia">
+                        <span id="referenciaError" class="error-message"></span>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="monto">Monto de Pago *</label>
+                        <input type="number" id="monto" name="monto" step="0.01" min="0">
+                        <span id="montoError" class="error-message"></span>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="tipoPago">Tipo de Pago *</label>
+                        <select id="tipoPago" name="tipoPago">
+                            <option value="">Seleccione un tipo de pago</option>
+                            <option value="Efectivo">Efectivo</option>
+                            <option value="Transferencia">Transferencia Bancaria</option>
+                            <option value="Pago_Movil">Pago Móvil</option>
+                            <option value="zelle">Zelle</option>
+                            <option value="paypal">PayPal</option>
+                            <option value="Binance">Binance</option>
+                            <option value="Binance">Zinli</option>
+                        </select>
+                        <span id="tipoPagoError" class="error-message"></span>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="fecha">Fecha del Pago *</label>
+                        <input type="date" id="fecha" name="fecha">
+                        <span id="fechaError" class="error-message"></span>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="nombre">Nombre Completo *</label>
+                        <input type="text" id="nombre" name="nombre">
+                        <span id="nombreError" class="error-message"></span>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="cedula">Cédula de Identidad propia *</label>
+                        <input type="text" id="cedula" name="cedula" placeholder="Ej: V-12345678">
+                        <span id="cedulaError" class="error-message"></span>
+                    </div>
+                    <div class="form-group">
+                        <label for="banco">Banco de origen *</label>
+                        <select id="banco" name="banco">
+                            <option value="">Seleccione un banco</option>
+                            <option value="0102 - Banco de Venezuela">0102 - Banco de Venezuela</option>
+                            <option value="0104 - Venezolano de Crédito">0104 - Venezolano de Crédito</option>
+                            <option value="0105 - Banco Mercantil">0105 - Banco Mercantil</option>
+                            <option value="0108 - Banco Provincial">0108 - Banco Provincial</option>
+                            <option value="0114 - Banco del Caribe">0114 - Banco del Caribe</option>
+                            <option value="0115 - Banco Exterior">0115 - Banco Exterior</option>
+                            <option value="0116 - BOD">0116 - BOD</option>
+                            <option value="0128 - Banesco">0128 - Banesco</option>
+                            <option value="0134 - Banco Venezolano de Crédito">0134 - Banco Venezolano de Crédito</option>
+                            <option value="0137 - Banco Sofitasa">0137 - Banco Sofitasa</option>
+                            <option value="0138 - Banco Plaza">0138 - Banco Plaza</option>
+                            <option value="0146 - Bangente">0146 - Bangente</option>
+                            <option value="0151 - BFC">0151 - BFC</option>
+                            <option value="0156 - 100% Banco">0156 - 100% Banco</option>
+                            <option value="0157 - DelSur">0157 - DelSur</option>
+                            <option value="0163 - Banco del Tesoro">0163 - Banco del Tesoro</option>
+                            <option value="0166 - Banco Agrícola">0166 - Banco Agrícola</option>
+                            <option value="0168 - Bancrecer">0168 - Bancrecer</option>
+                            <option value="0169 - Mi Banco">0169 - Mi Banco</option>
+                            <option value="0171 - Banco Activo">0171 - Banco Activo</option>
+                            <option value="0172 - Bancamiga">0172 - Bancamiga</option>
+                            <option value="0173 - BID">0173 - BID</option>
+                            <option value="0174 - Banplus">0174 - Banplus</option>
+                            <option value="0175 - Bicentenario">0175 - Bicentenario</option>
+                            <option value="0176 - BANFANB">0176 - BANFANB</option>
+                            <option value="0191 - BNC">0191 - BNC</option>
+                            <option value="Zelle">Zelle</option>
+                            <option value="PayPal">PayPal</option>
+                            <option value="Binance">Binance</option>
+                            <option value="Zinli">Zinli</option>
+                        </select>
+                        <span id="bancoError" class="error-message"></span>
+                    </div>
+                    <div class="form-group">
+                        <label for="Torre">Edificio *</label>
+                        <select name="torre" id="torre">
+                            <option value="" >Selecione una opcion</option>
+                            <option value="A">A</option>
+                            <option value="B">B</option>
+                            <option value="C">C</option>
+                            <option value="D">D</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="apartamento">Apartamento *</label>
+                        <select name="apart" id="apart" class="select">
+                            <option disabled>Planta Baja</option>
+                            <option value="PB-1">PB - 1</option>
+                            <option value="PB-2">PB - 2</option>
+                            <option value="PB-3">PB - 3</option>
+                            <option value="PB-4">PB - 4</option>
+                            <option disabled>Primer Piso</option>
+                            <option value="1-1">1 - 1</option>
+                            <option value="1-2">1 - 2</option>
+                            <option value="1-3">1 - 3</option>
+                            <option value="1-4">1 - 4</option>
+                            <option disabled>Segundo Piso</option>
+                            <option value="2-1">2 - 1</option>
+                            <option value="2-2">2 - 2</option>
+                            <option value="2-3">2 - 3</option>
+                            <option value="2-4">2 - 4</option>
+                            <option disabled>Tercer Piso</option>
+                            <option value="3-1">3 - 1</option>
+                            <option value="3-2">3 - 2</option>
+                            <option value="3-3">3 - 3</option>
+                            <option value="3-4">3 - 4</option>
+                            <option disabled>Cuarto Piso</option>
+                            <option value="4-1">4 - 1</option>
+                            <option value="4-2">4 - 2</option>
+                            <option value="4-3">4 - 3</option>
+                            <option value="4-4">4 - 4</option>
+                            <option disabled>Quinto Piso</option>
+                            <option value="5-1">5 - 1</option>
+                            <option value="5-2">5 - 2</option>
+                            <option value="5-3">5 - 3</option>
+                            <option value="5-4">5 - 4</option>
+                            <option disabled>Sexto Piso</option>
+                            <option value="6-1">6 - 1</option>
+                            <option value="6-2">6 - 2</option>
+                            <option value="6-3">6 - 3</option>
+                            <option value="6-4">6 - 4</option>
+                            <option disabled>Séptimo Piso</option>
+                            <option value="7-1">7 - 1</option>
+                            <option value="7-2">7 - 2</option>
+                            <option value="7-3">7 - 3</option>
+                            <option value="7-4">7 - 4</option>
+                            <option disabled>Octavo Piso</option>
+                            <option value="8-1">8 - 1</option>
+                            <option value="8-2">8 - 2</option>
+                            <option value="8-3">8 - 3</option>
+                            <option value="8-4">8 - 4</option>
+                            <option disabled>Noveno Piso</option>
+                            <option value="9-1">9 - 1</option>
+                            <option value="9-2">9 - 2</option>
+                            <option value="9-3">9 - 3</option>
+                            <option value="9-4">9 - 4</option>
+                            <option disabled>Décimo Piso</option>
+                            <option value="10-1">10 - 1</option>
+                            <option value="10-2">10 - 2</option>
+                            <option value="10-3">10 - 3</option>
+                            <option value="10-4">10 - 4</option>
+                            <option disabled>Onceavo Piso</option>
+                            <option value="11-1">11 - 1</option>
+                            <option value="11-2">11 - 2</option>
+                            <option value="11-3">11 - 3</option>
+                            <option value="11-4">11 - 4</option>
+                            <option disabled>Penthouse</option>
+                            <option value="PH-1">PH - 1</option>
+                            <option value="PH-2">PH - 2</option>
+                            <option value="PH-3">PH - 3</option>
+                            <option value="PH-4">PH - 4</option>
+                        </select>
+                    </div>
+                    <button type="submit" class="submitBtn" id="submitBtn">Registrar Pago</button>
+                </form>
+            </main>
+
+            <footer class="footer">
+                <p>&copy; 2023 Panel de Administración. Todos los derechos reservados.</p>
+            </footer>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="/js/script.js"></script>
+    <script src="/js/pagos_user.js"></script>
+</body>
+</html>

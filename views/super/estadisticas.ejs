@@ -1,0 +1,30 @@
+<%- include('../partials/header') %>
+<%- include('../partials/sidebar_super') %>
+<%- include('../partials/navbar', { titulo: 'Estadísticas de Pagos', icono: 'fa-chart-line', usuario }) %>
+
+<main class="content">
+  <section class="crud">
+    <h2>Historial de pagos por hotel y mes</h2>
+    <table>
+      <thead>
+        <tr>
+          <th>Hotel</th>
+          <th>Mes</th>
+          <th>Total Pagado</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% estadisticas.forEach(e => { %>
+          <tr>
+            <td><%= e.hotel %></td>
+            <td><%= e.mes %></td>
+            <td><strong>$<%= e.total_pagado %></strong></td>
+          </tr>
+        <% }) %>
+      </tbody>
+    </table>
+  </section>
+</main>
+
+<%- include('../partials/footer') %>
+

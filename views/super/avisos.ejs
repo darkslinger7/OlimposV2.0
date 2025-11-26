@@ -1,0 +1,45 @@
+<%- include('../partials/header') %>
+<%- include('../partials/sidebar_super') %>
+<%- include('../partials/navbar', { titulo: 'Avisos', icono: 'fa-bullhorn', usuario }) %>
+
+<main class="content">
+  <section class="agg">
+    <form method="POST" action="/super/avisos">
+      <input name="titulo" placeholder="Título del aviso" required>
+      <textarea name="mensaje" placeholder="Mensaje del aviso" required></textarea>
+      <select name="rol_destino" required>
+        <option value="administrador">Administradores</option>
+        <option value="cliente">Clientes</option>
+      </select>
+      <button type="submit">Publicar Aviso</button>
+    </form>
+  </section>
+
+  <section class="crud">
+    <table>
+      <thead>
+        <tr><th>Título</th><th>Mensaje</th><th>Fecha</th><th>Para</th><th>Emisor</th><th>Acciones</th></tr>
+      </thead>
+      <tbody>
+        <% avisos.forEach(a => { %>
+          <tr>
+            <td><%= a.titulo %></td>
+            <td><%= a.mensaje %></td>
+            <td><%= new Date(a.fecha).toLocaleString() %></td>
+            <td><%= a.rol_destino %></td>
+            <td><%= a.emisor %></td>
+            <td><a href="#" onclick="eliminarAviso('<%= a.id_aviso %>')">🗑️</a></td>
+          </tr>
+        <% }) %>
+      </tbody>
+    </table>
+  </section>
+</main>
+
+<script>
+function eliminarAviso(id) {
+  fetch('/super/avisos/eliminar/' + id).then(() => location.reload());
+}
+</script>
+
+<%- include('../partials/footer') %>

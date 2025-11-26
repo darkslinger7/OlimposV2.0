@@ -1,0 +1,29 @@
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title><%= titulo %> | Panel Super</title>
+
+  <link rel="stylesheet" href="/css/shared/base.css">
+  <link rel="stylesheet" href="/css/super/global.css">
+
+  <% if (titulo === 'Dashboard') { %>
+    <link rel="stylesheet" href="/css/super/dashboard.css">
+  <% } else if (titulo === 'Trabajadores') { %>
+    <link rel="stylesheet" href="/css/super/trabajadores.css">
+  <% } else if (titulo === 'Pagos') { %>
+    <link rel="stylesheet" href="/css/super/pagos.css">
+  <% } else if (titulo === 'Estadísticas') { %>
+    <link rel="stylesheet" href="/css/super/estadisticas.css">
+  <% } else if (titulo === 'Usuarios') { %>
+    <link rel="stylesheet" href="/css/super/usuarios.css">
+  <% } %>
+  <% if (titulo === 'Usuarios') { %>
+  <link rel="stylesheet" href="/css/super/usuarios.css"> 
+<% } %>
+     <% if (titulo === 'Usuarios') { %>
+  <link rel="stylesheet" href="/css/admin/usuarios.css ">  
+<% } %>
+
+
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+</head>

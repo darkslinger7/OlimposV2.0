@@ -1,0 +1,103 @@
+<%- include('../partials/header') %>
+<%- include('../partials/sidebar_super') %>
+<%- include('../partials/navbar', { titulo: 'Trabajadores', icono: 'fa-users-cog', usuario }) %>
+
+<main class="content">
+
+  <!-- Tabla de trabajadores -->
+  <section class="crud">
+    <h2>Asignar trabajos a trabajadores</h2>
+    <table>
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Nombre</th>
+          <th>Cargo</th>
+          <th>Trabajo</th>
+          <th>Sueldo</th>
+          <th>Asignar</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% trabajadores.forEach(u => { %>
+          <tr>
+            <td><%= u.id %></td>
+            <td><%= u.nombre_apellido %></td>
+            <td><%= u.cargo %></td>
+            <td><%= u.trabajo || 'Sin asignar' %></td>
+            <td><%= u.sueldo ? '$' + u.sueldo : '—' %></td>
+            <td>
+              <form method="POST" action="/super/trabajadores/asignar">
+                <input type="hidden" name="id_usuario" value="<%= u.id %>">
+                <select name="id_trabajo" required>
+                  <% trabajos.forEach(t => { %>
+                    <option value="<%= t.id_trabajo %>"><%= t.nombre %></option>
+                  <% }) %>
+                </select>
+                <input type="number" name="sueldo" step="0.01" placeholder="Sueldo mensual" required>
+                <button type="submit">Asignar</button>
+              </form>
+            </td>
+          </tr>
+        <% }) %>
+      </tbody>
+    </table>
+  </section>
+
+  <!-- Registro de nuevos trabajos -->
+  <section class="agg">
+    <h2>Registrar nuevo trabajo</h2>
+    <form method="POST" action="/super/trabajadores/registrarTrabajo">
+      <input name="nombre" placeholder="Nombre del trabajo" required>
+      <textarea name="descripcion" placeholder="Descripción del trabajo"></textarea>
+      <button type="submit">Registrar</button>
+    </form>
+  </section>
+
+  <!-- Tabla de trabajos con edición -->
+  <section class="crud">
+    <h2>Trabajos registrados</h2>
+    <table>
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Nombre</th>
+          <th>Descripción</th>
+          <th>Editar</th>
+          <th>Eliminar</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% trabajos.forEach(t => { %>
+          <tr>
+            <td><%= t.id_trabajo %></td>
+            <td>
+              <form method="POST" action="/super/trabajadores/editarTrabajo">
+                <input type="hidden" name="id_trabajo" value="<%= t.id_trabajo %>">
+                <input name="nombre" value="<%= t.nombre %>" required>
+            </td>
+            <td>
+                <input name="descripcion" value="<%= t.descripcion %>">
+            </td>
+            <td>
+                <button type="submit">💾</button>
+              </form>
+            </td>
+            <td>
+              <a href="#" onclick="eliminarTrabajo('<%= t.id_trabajo %>')">🗑️</a>
+            </td>
+          </tr>
+        <% }) %>
+      </tbody>
+    </table>
+  </section>
+
+</main>
+
+<script>
+  function eliminarTrabajo(id) {
+    fetch('/super/trabajadores/eliminarTrabajo/' + id).then(() => location.reload());
+  }
+</script>
+
+<%- include('../partials/footer') %>

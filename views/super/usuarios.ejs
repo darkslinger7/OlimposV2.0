@@ -1,0 +1,133 @@
+<%- include('../partials/header') %>
+<%- include('../partials/sidebar_super') %>
+<%- include('../partials/navbar', { titulo: 'Usuarios', icono: 'fa-user', usuario }) %>
+
+<div class="main-content">
+  <main class="content">
+    
+    <!-- Tarjeta resumen -->
+    <section class="tarjetas-panel">
+      <div class="tarjeta">
+        <div class="icono-tarjeta fondo-azul">
+          <i class="fas fa-users"></i>
+        </div>
+        <div class="info-tarjeta">
+          <h3>Usuarios Registrados</h3>
+          <p><%= usuarios.length %></p>
+          <input type="text" id="buscar_cedula" placeholder="Buscar por cédula">
+          <button id="btnBuscarCedula">Buscar <i class="fa fa-search"></i></button>
+          <button id="btnLimpiarCedula">Limpiar <i class="fa fa-eraser"></i></button>
+        </div>
+      </div>
+    </section>
+
+    <!-- Formulario de agregar usuario -->
+    <section class="agg">
+      <form method="POST" action="/super/usuarios/registrar" autocomplete="off" class="login-form">
+        <div class="form-group">
+          <label><i class="fas fa-user"></i> Nombre y Apellido</label>
+          <input type="text" name="name">
+        </div>
+        <div class="form-group">
+          <label><i class="fas fa-user"></i> Usuario</label>
+          <input type="text" name="user">
+        </div>
+        <div class="form-group">
+          <label><i class="fas fa-lock"></i> Contraseña</label>
+          <input type="password" name="pass">
+        </div>
+        <div class="form-group">
+          <label><i class="fas fa-envelope"></i> Correo</label>
+          <input type="email" name="email">
+        </div>
+        <div class="form-group">
+          <label><i class="fas fa-phone"></i> Teléfono</label>
+          <input type="text" name="telefono" value="+58">
+        </div>
+        <div class="form-group">
+          <label><i class="far fa-id-card"></i> Cédula</label>
+          <input type="text" name="cedula">
+        </div>
+
+        <div class="form-group">
+          <label>Hotel</label>
+          <select name="hotel">
+            <% hoteles.forEach(h => { %>
+              <option value="<%= h.id %>"><%= h.nombre %></option>
+            <% }) %>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label>Habitación</label>
+          <select name="habitacion">
+            <% habitaciones.forEach(h => { %>
+              <option value="<%= h.id %>"><%= h.numero %></option>
+            <% }) %>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label>Cargo</label>
+          <select name="cargo">
+            <option value="2">Administrador</option>
+            <option value="3">Trabajador</option>
+            <option value="4">Cliente</option>
+          </select>
+        </div>
+
+        <button type="submit" id="btnAgregarUsuario">Agregar usuario <i class="fa fa-user-plus"></i></button>
+      </form>
+    </section>
+
+    <!-- Tabla CRUD -->
+    <section class="crud">
+      <table>
+        <thead>
+          <tr>
+            <th>ID</th><th>Nombre</th><th>Usuario</th><th>Correo</th><th>Teléfono</th><th>Cédula</th>
+            <th>Hotel</th><th>Habitación</th><th>Cargo</th><th>Acciones</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% if (usuarios.length > 0) { %>
+            <% usuarios.forEach(u => { %>
+              <tr>
+                <td><%= u.id %></td>
+                <td><%= u.nombre_apellido %></td>
+                <td><%= u.usuario %></td>
+                <td><%= u.email %></td>
+                <td><%= u.telefono %></td>
+                <td><%= u.cedula %></td>
+                <td><%= u.hotel_nombre %></td>
+                <td><%= u.habitacion_numero %></td>
+                <td>
+                  <%= u.id_cargo === 1 ? 'Superusuario' :
+                      u.id_cargo === 2 ? 'Administrador' :
+                      u.id_cargo === 3 ? 'Trabajador' :
+                      u.id_cargo === 4 ? 'Cliente' : u.id_cargo %>
+                </td>
+                <td>
+                  <% if (u.id_cargo === 1) { %>
+                    <a href="#" onclick="eliminarAdmin('<%= u.id %>')" class="fa fa-trash" title="Eliminar"></a>
+                  <% } else { %>
+                    <a href="#" onclick="eliminarUsuario('<%= u.id %>')" class="fa fa-trash" title="Eliminar"></a>
+                  <% } %>
+                </td>
+              </tr>
+            <% }) %>
+          <% } else { %>
+            <tr><td colspan="10">No hay usuarios registrados.</td></tr>
+          <% } %>
+        </tbody>
+      </table>
+    </section>
+  </main>
+
+<%- include('../partials/footer') %>
+
+</div>
+
+<script src="/js/script.js"></script>
+<script src="/js/user_admin.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>

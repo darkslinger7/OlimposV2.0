@@ -1,0 +1,152 @@
+/* ===== RESET UNIVERSAL ===== */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+/* ===== TIPOGRAFÍA ===== */
+body {
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+  color: #333;
+  line-height: 1.6;
+  overflow-x: hidden;
+
+  /* Fondo dinámico por hotel */
+  background-color: var(--bg-color, #f8f9fa);
+  background-image: var(--bg-image);
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+
+/* ===== HOTEL BACKGROUNDS ===== */
+.hotel-oasis {
+  --bg-image: url('/img/Oasis.jpg');
+}
+
+.hotel-atenea {
+  --bg-image: url('/img/Atenea.jpg');
+}
+
+.hotel-paraiso {
+  --bg-image: url('/img/Paraiso.jpg');
+}
+
+.hotel-brisasocaso {
+  --bg-image: url('/img/Brisasocaso.png');
+}
+
+.hotel-eloso {
+  --bg-image: url('/img/Eloso.png');
+}
+
+/* ===== ENLACES ===== */
+a {
+  text-decoration: none;
+  color: inherit;
+}
+
+a:hover {
+  text-decoration: underline;
+}
+
+/* ===== TITULOS ===== */
+h1, h2, h3, h4, h5 {
+  font-weight: 600;
+  color: #333;
+  margin-bottom: 10px;
+}
+
+/* ===== LISTAS ===== */
+ul {
+  list-style: none;
+  padding-left: 0;
+}
+
+/* ===== FORMULARIOS BASE ===== */
+input, select, textarea {
+  font-family: inherit;
+  font-size: 1rem;
+  padding: 8px;
+  border-radius: 4px;
+  border: 1px solid #ccc;
+  outline: none;
+}
+
+input:focus, select:focus, textarea:focus {
+  border-color: #3498db;
+  box-shadow: 0 0 0 2px rgba(52, 152, 219, 0.2);
+}
+
+/* ===== BOTONES BASE ===== */
+button {
+  font-family: inherit;
+  font-size: 1rem;
+  padding: 8px 16px;
+  border-radius: 4px;
+  border: none;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+button:focus {
+  outline: 2px solid #3498db;
+  outline-offset: 2px;
+}
+
+/* ===== TABLAS BASE ===== */
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: 30px;
+}
+
+th, td {
+  padding: 12px;
+  border: 1px solid #ddd;
+  text-align: left;
+}
+
+th {
+  background-color: #f1f1f1;
+  color: #333;
+}
+
+/* ===== ACCESIBILIDAD ===== */
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* ===== RESPONSIVE BASE ===== */
+@media (max-width: 768px) {
+  body {
+    font-size: 0.95rem;
+  }
+
+  h1 {
+    font-size: 1.5rem;
+  }
+
+  h2 {
+    font-size: 1.3rem;
+  }
+}
+
+@media (max-width: 576px) {
+  body {
+    font-size: 0.9rem;
+  }
+
+  h1 {
+    font-size: 1.3rem;
+  }
+
+  h2 {
+    font-size: 1.1rem;
+  }
+}

@@ -1,0 +1,253 @@
+/* Variables de diseño */
+:root {
+  --primary: #4361ee;
+  --primary-dark: #3a56d4;
+  --secondary: #7209b7;
+  --error: #f72585;
+  --success: #4cc9f0;
+  --warning: #f8961e;
+  --dark: #212529;
+  --medium: #495057;
+  --light: #f8f9fa;
+  --border: #dee2e6;
+  --shadow-sm: 0 1px 3px rgba(0,0,0,0.12);
+  --shadow-md: 0 4px 6px rgba(0,0,0,0.15);
+  --shadow-lg: 0 10px 20px rgba(0,0,0,0.1);
+  --radius-sm: 6px;
+  --radius-md: 10px;
+  --radius-lg: 14px;
+  --transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Estructura principal */
+.content {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  padding: 2rem;
+  background-color: #f1f5f9;
+  font-family: 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+}
+
+/* Contenedor del formulario */
+#paymentForm {
+  width: 100%;
+  max-width: 600px;
+  background: white;
+  padding: 2.5rem;
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-lg);
+  margin: 0 auto;
+}
+
+/* Encabezado del formulario */
+#paymentForm::before {
+  content: '';
+  display: block;
+  height: 4px;
+  background: linear-gradient(90deg, var(--primary), var(--secondary));
+  border-radius: var(--radius-sm) var(--radius-sm) 0 0;
+  margin: -2.5rem -2.5rem 2rem -2.5rem;
+}
+
+/* Grupos de formulario */
+.form-group {
+  margin-bottom: 1.75rem;
+  position: relative;
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: 0.75rem;
+  color: var(--dark);
+  font-weight: 600;
+  font-size: 0.95rem;
+}
+
+.form-group label::after {
+  content: ' *';
+  color: var(--error);
+  opacity: 0;
+  transition: var(--transition);
+}
+
+.form-group.required label::after {
+  opacity: 1;
+}
+
+/* Campos de entrada */
+#paymentForm input,
+#paymentForm select {
+  width: 100%;
+  padding: 0.875rem 1.25rem;
+  border: 2px solid var(--border);
+  border-radius: var(--radius-md);
+  font-size: 1rem;
+  transition: var(--transition);
+  background-color: var(--light);
+  color: var(--dark);
+}
+
+#paymentForm input:focus,
+#paymentForm select:focus {
+  outline: none;
+  border-color: var(--primary);
+  background-color: white;
+  box-shadow: 0 0 0 3px rgba(67, 97, 238, 0.15);
+}
+
+/* Estilos específicos para tipos de campo */
+#paymentForm input[type="date"] {
+  appearance: none;
+  background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23495057' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpath d='M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z'%3e%3c/path%3e%3cpolyline points='17 21 17 13 7 13 7 21'%3e%3c/polyline%3e%3cpolyline points='7 3 7 8 15 8'%3e%3c/polyline%3e%3c/svg%3e");
+  background-repeat: no-repeat;
+  background-position: right 1rem center;
+  background-size: 1.25rem;
+}
+
+#paymentForm input[type="number"] {
+  -moz-appearance: textfield;
+}
+
+#paymentForm input[type="number"]::-webkit-outer-spin-button,
+#paymentForm input[type="number"]::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+/* Estados de validación */
+.form-group.error input,
+.form-group.error select {
+  border-color: var(--error);
+  background-color: rgba(247, 37, 133, 0.03);
+}
+
+.form-group.success input,
+.form-group.success select {
+  border-color: var(--success);
+}
+
+.error-message {
+  color: var(--error);
+  font-size: 0.85rem;
+  margin-top: 0.5rem;
+  display: block;
+  opacity: 0;
+  height: 0;
+  transform: translateY(-0.5rem);
+  transition: var(--transition);
+}
+
+.form-group.error .error-message {
+  opacity: 1;
+  height: auto;
+  transform: translateY(0);
+}
+
+/* Botón de enviar */
+#submitBtn {
+  width: 100%;
+  padding: 1rem;
+  background: linear-gradient(135deg, var(--primary), var(--secondary));
+  color: white;
+  border: none;
+  border-radius: var(--radius-md);
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: var(--transition);
+  margin-top: 1rem;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  box-shadow: 0 4px 6px rgba(67, 97, 238, 0.2);
+}
+
+#submitBtn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 12px rgba(67, 97, 238, 0.25);
+}
+
+#submitBtn:active {
+  transform: translateY(0);
+}
+
+#submitBtn:disabled {
+  background: linear-gradient(135deg, #adb5bd, #6c757d);
+  cursor: not-allowed;
+  transform: none !important;
+  box-shadow: none;
+  opacity: 0.8;
+}
+.swal2-popup {
+    border-radius: 16px !important;
+    font-family: 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif !important;
+}
+
+.swal2-title {
+    font-size: 1.5rem !important;
+    color: var(--dark) !important;
+}
+
+.swal2-confirm {
+    background-color: var(--primary) !important;
+    transition: var(--transition) !important;
+}
+
+.swal2-confirm:hover {
+    background-color: var(--primary-dark) !important;
+    transform: translateY(-1px) !important;
+}
+
+.swal2-cancel {
+    transition: var(--transition) !important;
+}
+
+.swal2-cancel:hover {
+    transform: translateY(-1px) !important;
+}
+
+.swal2-icon.swal2-error {
+    border-color: var(--error) !important;
+    color: var(--error) !important;
+}
+
+.swal2-icon.swal2-success {
+    border-color: var(--success) !important;
+    color: var(--success) !important;
+}
+
+.swal2-icon.swal2-question {
+    border-color: var(--primary) !important;
+    color: var(--primary) !important;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .content {
+    padding: 1.5rem;
+  }
+  
+  #paymentForm {
+    padding: 2rem 1.5rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .content {
+    padding: 1rem;
+  }
+  
+  #paymentForm {
+    padding: 1.5rem 1rem;
+  }
+  
+  .form-group {
+    margin-bottom: 1.5rem;
+  }
+  
+  #paymentForm input,
+  #paymentForm select {
+    padding: 0.75rem 1rem;
+  }
+}
