@@ -1,0 +1,112 @@
+<%- include('../partials/header') %>
+    <%- include('../partials/sidebar_cliente') %>
+        <%- include('../partials/navbar', { titulo: 'Detalles de la Habitación' , icono: 'fa-bed' , usuario }) %>
+            <style>
+                .feature-box {
+                    background: #f8f9fa;
+                    padding: 15px;
+                    border-radius: 8px;
+                    text-align: center;
+                    transition: transform 0.2s;
+                }
+
+                .feature-box:hover {
+                    transform: translateY(-2px);
+                }
+
+                /* Colores activos */
+                .wifi-active {
+                    color: #27ae60 !important;
+                }
+
+                /* Verde */
+                .tv-active {
+                    color: #2980b9 !important;
+                }
+
+                /* Azul */
+                .aire-active {
+                    color: #34495e !important;
+                }
+
+                /* Oscuro */
+                .jacuzzi-active {
+                    color: #e74c3c !important;
+                }
+
+                /* Rojo */
+
+                /* Color inactivo (Deshabilitado) */
+                .feature-inactive {
+                    color: #ccc !important;
+                }
+            </style>
+            <div class="main-content">
+                <main class="content">
+
+                    <% if (habitacion) { %>
+                        <div
+                            style="background: white; border-radius: 8px; overflow: hidden; box-shadow: 0 4px 15px rgba(0,0,0,0.1); max-width: 800px; margin: 0 auto;">
+                            <div
+                                style="height: 200px; background: #bdc3c7; display: flex; align-items: center; justify-content: center; color: white;">
+                                <i class="fas fa-image" style="font-size: 3rem;"></i>
+                            </div>
+
+                            <div style="padding: 30px;">
+                                <div
+                                    style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                                    <h2 style="margin: 0; color: #2c3e50;">Habitación <%= habitacion.numero %>
+                                    </h2>
+                                    <span class="badge" style="background: #3498db; font-size: 1rem;">
+                                        <%= habitacion.tipo %>
+                                    </span>
+                                </div>
+
+                                <div
+                                    style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 15px; margin-bottom: 30px;">
+
+                                    <div
+                                        class="feature-box <%= habitacion.tiene_wifi ? 'wifi-active' : 'feature-inactive' %>">
+                                        <i class="fas fa-wifi" style="font-size: 1.5rem; margin-bottom: 5px;"></i>
+                                        <div>WiFi <%= habitacion.tiene_wifi ? 'Incluido' : 'No' %>
+                                        </div>
+                                    </div>
+
+                                    <div
+                                        class="feature-box <%= habitacion.tiene_televisor ? 'tv-active' : 'feature-inactive' %>">
+                                        <i class="fas fa-tv" style="font-size: 1.5rem; margin-bottom: 5px;"></i>
+                                        <div>TV Cable <%= habitacion.tiene_televisor ? 'Si' : 'No' %>
+                                        </div>
+                                    </div>
+
+                                    <div
+                                        class="feature-box <%= habitacion.tiene_aire ? 'aire-active' : 'feature-inactive' %>">
+                                        <i class="fas fa-snowflake" style="font-size: 1.5rem; margin-bottom: 5px;"></i>
+                                        <div>Aire Acond. <%= habitacion.tiene_aire ? 'Si' : 'No' %>
+                                        </div>
+                                    </div>
+
+                                    <div
+                                        class="feature-box <%= habitacion.tiene_jacuzzi ? 'jacuzzi-active' : 'feature-inactive' %>">
+                                        <i class="fas fa-hot-tub" style="font-size: 1.5rem; margin-bottom: 5px;"></i>
+                                        <div>Jacuzzi <%= habitacion.tiene_jacuzzi ? 'Si' : 'No' %>
+                                        </div>
+                                    </div>
+
+                                </div>
+
+                                <p style="color: #7f8c8d; text-align: center;">
+                                    Si necesitas algo adicional, por favor contáctanos a través de la sección de Avisos.
+                                </p>
+                            </div>
+                        </div>
+                        <% } else { %>
+                            <div style="text-align: center; padding: 50px; color: #aaa;">
+                                <i class="fas fa-bed" style="font-size: 3rem; margin-bottom: 15px;"></i>
+                                <p>No tienes una habitación asignada en este momento.</p>
+                            </div>
+                            <% } %>
+
+                </main>
+                <%- include('../partials/footer') %>
+            </div>

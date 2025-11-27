@@ -1,30 +1,191 @@
 <%- include('../partials/header') %>
 <%- include('../partials/sidebar_super') %>
-<%- include('../partials/navbar', { titulo: 'Estadísticas de Pagos', icono: 'fa-chart-line', usuario }) %>
+<%- include('../partials/navbar', { titulo: 'Reporte Financiero', icono: 'fa-chart-pie', usuario }) %>
 
-<main class="content">
-  <section class="crud">
-    <h2>Historial de pagos por hotel y mes</h2>
-    <table>
-      <thead>
-        <tr>
-          <th>Hotel</th>
-          <th>Mes</th>
-          <th>Total Pagado</th>
-        </tr>
-      </thead>
-      <tbody>
-        <% estadisticas.forEach(e => { %>
-          <tr>
-            <td><%= e.hotel %></td>
-            <td><%= e.mes %></td>
-            <td><strong>$<%= e.total_pagado %></strong></td>
-          </tr>
-        <% }) %>
-      </tbody>
-    </table>
-  </section>
-</main>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<style>
+    .balance-positivo { color: #27ae60; font-weight: bold; }
+    .balance-negativo { color: #c0392b; font-weight: bold; }
+    .chart-container {
+        background: white;
+        padding: 20px;
+        border-radius: 8px;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        margin-bottom: 2rem;
+        height: 400px;
+    }
+</style>
+
+<div class="main-content">
+  <main class="content">
+
+    <section class="tarjetas-panel">
+        <div class="tarjeta">
+            <div class="icono-tarjeta" style="background: #27ae60;">
+                <i class="fas fa-arrow-up"></i>
+            </div>
+            <div class="info-tarjeta">
+                <h3>Ingresos Totales</h3>
+                <p style="color: #27ae60;">$<%= globales.totalIngresos.toLocaleString('en-US', {minimumFractionDigits: 2}) %></p>
+            </div>
+        </div>
+
+        <div class="tarjeta">
+            <div class="icono-tarjeta" style="background: #c0392b;">
+                <i class="fas fa-arrow-down"></i>
+            </div>
+            <div class="info-tarjeta">
+                <h3>Egresos Totales</h3>
+                <p style="color: #c0392b;">$<%= globales.totalEgresos.toLocaleString('en-US', {minimumFractionDigits: 2}) %></p>
+            </div>
+        </div>
+
+        <div class="tarjeta">
+            <div class="icono-tarjeta" style="background: #34495e;">
+                <i class="fas fa-wallet"></i>
+            </div>
+            <div class="info-tarjeta">
+                <h3>Ganancia Neta</h3>
+                <p class="<%= globales.totalGanancia >= 0 ? 'balance-positivo' : 'balance-negativo' %>">
+                    $<%= globales.totalGanancia.toLocaleString('en-US', {minimumFractionDigits: 2}) %>
+                </p>
+            </div>
+        </div>
+    </section>
+
+    <section class="chart-container">
+        <canvas id="financeChart"></canvas>
+    </section>
+
+    <section class="crud">
+        <h3 style="color: #34495e; border-bottom: 2px solid #eee;">Detalle por Hotel</h3>
+        <table>
+            <thead>
+                <tr>
+                    <th>Hotel</th>
+                    <th>Ingresos (Cobros)</th>
+                    <th>Egresos (Pagos)</th>
+                    <th>Ganancia Neta</th>
+                    <th>Estado</th>
+                </tr>
+            </thead>
+            <tbody>
+                <% if (estadisticas.length > 0) { %>
+                    <% estadisticas.forEach(e => { %>
+                        <tr>
+                            <td><strong><%= e.hotel %></strong></td>
+                            <td style="color: #27ae60;">
+                                <i class="fas fa-arrow-up" style="font-size:0.8rem"></i> 
+                                $<%= parseFloat(e.ingresos).toLocaleString('en-US', {minimumFractionDigits: 2}) %>
+                            </td>
+                            <td style="color: #c0392b;">
+                                <i class="fas fa-arrow-down" style="font-size:0.8rem"></i> 
+                                $<%= parseFloat(e.egresos).toLocaleString('en-US', {minimumFractionDigits: 2}) %>
+                            </td>
+                            <td>
+                                <span class="<%= e.ganancia_neta >= 0 ? 'balance-positivo' : 'balance-negativo' %>">
+                                    $<%= parseFloat(e.ganancia_neta).toLocaleString('en-US', {minimumFractionDigits: 2}) %>
+                                </span>
+                            </td>
+                            <td>
+                                <% if(e.ganancia_neta > 0) { %>
+                                    <span class="badge" style="background: #27ae60;">Rentable</span>
+                                <% } else if(e.ganancia_neta < 0) { %>
+                                    <span class="badge" style="background: #c0392b;">Déficit</span>
+                                <% } else { %>
+                                    <span class="badge" style="background: #95a5a6;">Neutro</span>
+                                <% } %>
+                            </td>
+                        </tr>
+                    <% }) %>
+                <% } else { %>
+                    <tr><td colspan="5" style="text-align: center;">No hay datos financieros registrados.</td></tr>
+                <% } %>
+            </tbody>
+        </table>
+    </section>
+
+  </main>
+<%- include('../partials/footer') %>
+</div>
+
+<script id="data-hoteles" type="application/json">
+    <%- JSON.stringify(estadisticas.map(e => e.hotel)) %>
+</script>
+
+<script id="data-ingresos" type="application/json">
+    <%- JSON.stringify(estadisticas.map(e => e.ingresos)) %>
+</script>
+
+<script id="data-egresos" type="application/json">
+    <%- JSON.stringify(estadisticas.map(e => e.egresos)) %>
+</script>
+
+
+<script>
+    // Leemos los datos de las etiquetas de arriba
+    const hoteles = JSON.parse(document.getElementById('data-hoteles').textContent);
+    const ingresos = JSON.parse(document.getElementById('data-ingresos').textContent);
+    const egresos = JSON.parse(document.getElementById('data-egresos').textContent);
+
+    const ctx = document.getElementById('financeChart').getContext('2d');
+    const myChart = new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: hoteles,
+            datasets: [
+                {
+                    label: 'Ingresos',
+                    data: ingresos,
+                    backgroundColor: 'rgba(39, 174, 96, 0.6)',
+                    borderColor: 'rgba(39, 174, 96, 1)',
+                    borderWidth: 1  
+                },
+                {
+                    label: 'Egresos',
+                    data: egresos,
+                    backgroundColor: 'rgba(192, 57, 43, 0.6)',
+                    borderColor: 'rgba(192, 57, 43, 1)',
+                    borderWidth: 1
+                }
+            ]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                title: {
+                    display: true,
+                    text: 'Comparativa Financiera por Hotel',
+                    font: { size: 16 }
+                },
+                tooltip: {
+                    callbacks: {
+                        label: function(context) {
+                            let label = context.dataset.label || '';
+                            if (label) {
+                                label += ': ';
+                            }
+                            if (context.parsed.y !== null) {
+                                label += new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(context.parsed.y);
+                            }
+                            return label;
+                        }
+                    }
+                }
+            },
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    ticks: {
+                        callback: function(value) { return '$' + value; }
+                    }
+                }
+            }
+        }
+    });
+</script>
 
 <%- include('../partials/footer') %>
-
+</div>

@@ -1,0 +1,67 @@
+<%- include('../partials/header') %>
+<%- include('../partials/sidebar_cliente') %>
+<%- include('../partials/navbar', { titulo: 'Reportar Pago', icono: 'fa-money-check-alt', usuario }) %>
+
+<div class="main-content">
+  <main class="content">
+
+    <div class="agg">
+        <h3 style="color: #27ae60; margin-bottom: 15px;"><i class="fas fa-file-invoice-dollar"></i> Registrar Transferencia / Pago Móvil</h3>
+        <form method="POST" action="/cliente/pagos/reportar" class="login-form" style="border-top-color: #27ae60;">
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+                <div class="form-group">
+                    <label>Referencia / Comprobante</label>
+                    <input type="text" name="referencia" required placeholder="Últimos 6 dígitos">
+                </div>
+                <div class="form-group">
+                    <label>Monto ($)</label>
+                    <input type="number" name="monto" step="0.01" required placeholder="0.00">
+                </div>
+                <div class="form-group">
+                    <label>Método</label>
+                    <select name="tipo">
+                        <option value="Pago Movil">Pago Móvil</option>
+                        <option value="Transferencia">Transferencia Bancaria</option>
+                        <option value="Zelle">Zelle / Digital</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Banco / Plataforma</label>
+                    <input type="text" name="banco" placeholder="Ej. Banesco, PayPal...">
+                </div>
+            </div>
+            <button type="submit" style="background: #27ae60; width: 100%; margin-top: 20px;">Notificar Pago</button>
+        </form>
+    </div>
+
+    <section class="crud">
+        <h3 style="color: #34495e; border-bottom: 2px solid #eee;">Mis Pagos Reportados</h3>
+        <table>
+            <thead>
+                <tr>
+                    <th>Fecha</th>
+                    <th>Referencia</th>
+                    <th>Método</th>
+                    <th>Monto</th>
+                </tr>
+            </thead>
+            <tbody>
+                <% if (pagos.length > 0) { %>
+                    <% pagos.forEach(p => { %>
+                        <tr>
+                            <td><%= new Date(p.fecha_pago).toLocaleDateString() %></td>
+                            <td>#<%= p.num_referencia %></td>
+                            <td><%= p.tipo_pago %> (<%= p.bancoEmisor %>)</td>
+                            <td style="color: #27ae60; font-weight: bold;">$<%= p.monto_pago %></td>
+                        </tr>
+                    <% }) %>
+                <% } else { %>
+                    <tr><td colspan="4" style="text-align: center;">No has reportado pagos.</td></tr>
+                <% } %>
+            </tbody>
+        </table>
+    </section>
+
+  </main>
+<%- include('../partials/footer') %>
+</div>

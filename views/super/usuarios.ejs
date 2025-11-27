@@ -1,133 +1,370 @@
 <%- include('../partials/header') %>
-<%- include('../partials/sidebar_super') %>
-<%- include('../partials/navbar', { titulo: 'Usuarios', icono: 'fa-user', usuario }) %>
+  <%- include('../partials/sidebar_super') %>
+    <%- include('../partials/navbar', { titulo: 'Gestión de Usuarios' , icono: 'fa-users' , usuario }) %>
 
-<div class="main-content">
-  <main class="content">
-    
-    <!-- Tarjeta resumen -->
-    <section class="tarjetas-panel">
-      <div class="tarjeta">
-        <div class="icono-tarjeta fondo-azul">
-          <i class="fas fa-users"></i>
-        </div>
-        <div class="info-tarjeta">
-          <h3>Usuarios Registrados</h3>
-          <p><%= usuarios.length %></p>
-          <input type="text" id="buscar_cedula" placeholder="Buscar por cédula">
-          <button id="btnBuscarCedula">Buscar <i class="fa fa-search"></i></button>
-          <button id="btnLimpiarCedula">Limpiar <i class="fa fa-eraser"></i></button>
+      <style>
+        /* Estilos del Modal */
+        .modal {
+          display: none;
+          position: fixed;
+          z-index: 2000;
+          left: 0;
+          top: 0;
+          width: 100%;
+          height: 100%;
+          background-color: rgba(0, 0, 0, 0.5);
+          justify-content: center;
+          align-items: center;
+        }
+
+        .modal-content {
+          background-color: #fff;
+          padding: 25px;
+          border-radius: 8px;
+          width: 90%;
+          max-width: 600px;
+          position: relative;
+          animation: slideDown 0.3s ease;
+        }
+
+        @keyframes slideDown {
+          from {
+            transform: translateY(-50px);
+            opacity: 0;
+          }
+
+          to {
+            transform: translateY(0);
+            opacity: 1;
+          }
+        }
+
+        .close-modal {
+          position: absolute;
+          right: 20px;
+          top: 15px;
+          font-size: 24px;
+          cursor: pointer;
+          color: #aaa;
+        }
+
+        .close-modal:hover {
+          color: #000;
+        }
+
+        /* --- CLASES PARA ROLES (BADGES) --- */
+        .badge {
+          padding: 4px 8px;
+          border-radius: 4px;
+          color: white;
+          font-size: 0.85rem;
+          font-weight: 500;
+        }
+
+        .rol-1 {
+          background-color: #e74c3c;
+        }
+
+        /* Superusuario (Rojo) */
+        .rol-2 {
+          background-color: #3498db;
+        }
+
+        /* Administrador (Azul) */
+        .rol-3 {
+          background-color: #e67e22;
+        }
+
+        /* Trabajador (Naranja) */
+        .rol-4 {
+          background-color: #2ecc71;
+        }
+
+        /* Cliente (Verde) */
+      </style>
+
+      <div class="main-content">
+        <main class="content">
+
+          <section class="tarjetas-panel">
+            <div class="tarjeta">
+              <div class="icono-tarjeta fondo-azul">
+                <i class="fas fa-users"></i>
+              </div>
+              <div class="info-tarjeta">
+                <h3>Usuarios Totales</h3>
+                <p>
+                  <%= usuarios.length %>
+                </p>
+              </div>
+            </div>
+          </section>
+
+          <section class="agg">
+            <h3 style="margin-bottom: 15px; color: #2c3e50;"><i class="fas fa-plus-circle"></i> Nuevo Usuario</h3>
+            <form method="POST" action="/super/usuarios/registrar" autocomplete="off" class="login-form">
+
+              <div class="form-group">
+                <label>Nombre y Apellido</label>
+                <input type="text" name="name" required>
+              </div>
+              <div class="form-group">
+                <label>Usuario (Login)</label>
+                <input type="text" name="user" required>
+              </div>
+              <div class="form-group">
+                <label>Contraseña</label>
+                <input type="password" name="pass" required>
+              </div>
+              <div class="form-group">
+                <label>Email</label>
+                <input type="email" name="email" required>
+              </div>
+              <div class="form-group">
+                <label>Teléfono</label>
+                <input type="text" name="telefono" value="+58">
+              </div>
+              <div class="form-group">
+                <label>Cédula</label>
+                <input type="text" name="cedula" required>
+              </div>
+
+              <div class="form-group">
+                <label>Rol / Cargo</label>
+                <select name="cargo" required>
+                  <option value="2">Administrador</option>
+                  <option value="3">Trabajador</option>
+                  <option value="4">Cliente</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label>Hotel (Opcional)</label>
+                <select name="hotel">
+                  <option value="">-- Ninguno --</option>
+                  <% hoteles.forEach(h=> { %>
+                    <option value="<%= h.id %>">
+                      <%= h.nombre %>
+                    </option>
+                    <% }) %>
+                </select>
+              </div>
+              <div class="form-group">
+                <label>Habitación (Opcional)</label>
+                <select name="habitacion">
+                  <option value="">-- Ninguna --</option>
+                  <% habitaciones.forEach(hab=> { %>
+                    <option value="<%= hab.id %>">
+                      <%= hab.numero %>
+                    </option>
+                    <% }) %>
+                </select>
+              </div>
+
+              <button type="submit" id="btnAgregarUsuario">Registrar Usuario <i class="fa fa-save"></i></button>
+            </form>
+          </section>
+
+          <section class="crud">
+            <h3>Lista de Usuarios</h3>
+            <table>
+              <thead>
+                <tr>
+                  <th>Nombre</th>
+                  <th>Usuario</th>
+                  <th>Email</th>
+                  <th>Cédula</th>
+                  <th>Rol</th>
+                  <th>Hotel</th>
+                  <th>Acciones</th>
+                </tr>
+              </thead>
+              <tbody>
+                <% if (usuarios.length> 0) { %>
+                  <% usuarios.forEach(u=> { %>
+                    <tr>
+                      <td>
+                        <%= u.nombre_apellido %>
+                      </td>
+                      <td>
+                        <%= u.usuario %>
+                      </td>
+                      <td>
+                        <%= u.email %>
+                      </td>
+                      <td>
+                        <%= u.cedula %>
+                      </td>
+                      <td>
+                        <span class="badge rol-<%= u.id_cargo %>">
+                          <%= u.id_cargo===1 ? 'Super' : u.id_cargo===2 ? 'Admin' : u.id_cargo===3 ? 'Trabajador'
+                            : 'Cliente' %>
+                        </span>
+                      </td>
+                      <td>
+                        <%= u.hotel_nombre || '-' %>
+                      </td>
+                      <td>
+                        <a href="#" class="fa fa-edit" title="Editar" style="color: #f39c12; margin-right: 10px;"
+                          onclick="abrirModalEditar({
+                           id: '<%= u.id %>',
+                           name: '<%= u.nombre_apellido %>',
+                           user: '<%= u.usuario %>',
+                           email: '<%= u.email %>',
+                           telefono: '<%= u.telefono %>',
+                           cedula: '<%= u.cedula %>',
+                           cargo: '<%= u.id_cargo %>',
+                           hotel: '<%= u.id_hotel %>',
+                           habitacion: '<%= u.id_habitacion %>'
+                       })">
+                        </a>
+
+                        <% if (u.id_cargo !==1) { %>
+                          <a href="#" onclick="eliminarUsuario('<%= u.id %>')" class="fa fa-trash" title="Eliminar"
+                            style="color: #c0392b;"></a>
+                          <% } %>
+                      </td>
+                    </tr>
+                    <% }) %>
+                      <% } else { %>
+                        <tr>
+                          <td colspan="7" style="text-align: center;">No hay usuarios registrados.</td>
+                        </tr>
+                        <% } %>
+              </tbody>
+            </table>
+          </section>
+
+        </main>
+        <%- include('../partials/footer') %>
+      </div>
+
+      <div id="modalEditar" class="modal">
+        <div class="modal-content">
+          <span class="close-modal" onclick="cerrarModal()">&times;</span>
+          <h3 style="margin-bottom: 20px; color: #f39c12;"><i class="fas fa-edit"></i> Editar Usuario</h3>
+
+          <form method="POST" action="/super/usuarios/editar" autocomplete="off">
+            <input type="hidden" name="id_usuario" id="edit_id">
+
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+              <div class="form-group">
+                <label>Nombre</label>
+                <input type="text" name="name" id="edit_name" required>
+              </div>
+              <div class="form-group">
+                <label>Usuario</label>
+                <input type="text" name="user" id="edit_user" required>
+              </div>
+              <div class="form-group">
+                <label>Email</label>
+                <input type="email" name="email" id="edit_email" required>
+              </div>
+              <div class="form-group">
+                <label>Teléfono</label>
+                <input type="text" name="telefono" id="edit_telefono">
+              </div>
+              <div class="form-group">
+                <label>Cédula</label>
+                <input type="text" name="cedula" id="edit_cedula" required>
+              </div>
+              <div class="form-group">
+                <label>Contraseña (Dejar en blanco para no cambiar)</label>
+                <input type="password" name="pass" placeholder="Nueva contraseña...">
+              </div>
+
+              <div class="form-group">
+                <label>Rol</label>
+                <select name="cargo" id="edit_cargo">
+                  <option value="2">Administrador</option>
+                  <option value="3">Trabajador</option>
+                  <option value="4">Cliente</option>
+                </select>
+              </div>
+
+              <div class="form-group">
+                <label>Hotel</label>
+                <select name="hotel" id="edit_hotel">
+                  <option value="">-- Ninguno --</option>
+                  <% hoteles.forEach(h=> { %>
+                    <option value="<%= h.id %>">
+                      <%= h.nombre %>
+                    </option>
+                    <% }) %>
+                </select>
+              </div>
+              <div class="form-group">
+                <label>Habitación</label>
+                <select name="habitacion" id="edit_habitacion">
+                  <option value="">-- Ninguna --</option>
+                  <% habitaciones.forEach(hab=> { %>
+                    <option value="<%= hab.id %>">
+                      <%= hab.numero %>
+                    </option>
+                    <% }) %>
+                </select>
+              </div>
+            </div>
+
+            <button type="submit" style="width: 100%; margin-top: 20px; background: #f39c12;">Guardar Cambios</button>
+          </form>
         </div>
       </div>
-    </section>
 
-    <!-- Formulario de agregar usuario -->
-    <section class="agg">
-      <form method="POST" action="/super/usuarios/registrar" autocomplete="off" class="login-form">
-        <div class="form-group">
-          <label><i class="fas fa-user"></i> Nombre y Apellido</label>
-          <input type="text" name="name">
-        </div>
-        <div class="form-group">
-          <label><i class="fas fa-user"></i> Usuario</label>
-          <input type="text" name="user">
-        </div>
-        <div class="form-group">
-          <label><i class="fas fa-lock"></i> Contraseña</label>
-          <input type="password" name="pass">
-        </div>
-        <div class="form-group">
-          <label><i class="fas fa-envelope"></i> Correo</label>
-          <input type="email" name="email">
-        </div>
-        <div class="form-group">
-          <label><i class="fas fa-phone"></i> Teléfono</label>
-          <input type="text" name="telefono" value="+58">
-        </div>
-        <div class="form-group">
-          <label><i class="far fa-id-card"></i> Cédula</label>
-          <input type="text" name="cedula">
-        </div>
+      <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+      <script>
+        // --- Lógica del Modal ---
+        const modal = document.getElementById('modalEditar');
 
-        <div class="form-group">
-          <label>Hotel</label>
-          <select name="hotel">
-            <% hoteles.forEach(h => { %>
-              <option value="<%= h.id %>"><%= h.nombre %></option>
-            <% }) %>
-          </select>
-        </div>
+        function abrirModalEditar(datos) {
+          // Llenar los campos del formulario con los datos recibidos
+          document.getElementById('edit_id').value = datos.id;
+          document.getElementById('edit_name').value = datos.name;
+          document.getElementById('edit_user').value = datos.user;
+          document.getElementById('edit_email').value = datos.email;
+          document.getElementById('edit_telefono').value = datos.telefono;
+          document.getElementById('edit_cedula').value = datos.cedula;
+          document.getElementById('edit_cargo').value = datos.cargo;
+          document.getElementById('edit_hotel').value = datos.hotel || "";
+          document.getElementById('edit_habitacion').value = datos.habitacion || "";
 
-        <div class="form-group">
-          <label>Habitación</label>
-          <select name="habitacion">
-            <% habitaciones.forEach(h => { %>
-              <option value="<%= h.id %>"><%= h.numero %></option>
-            <% }) %>
-          </select>
-        </div>
+          // Mostrar el modal
+          modal.style.display = 'flex';
+        }
 
-        <div class="form-group">
-          <label>Cargo</label>
-          <select name="cargo">
-            <option value="2">Administrador</option>
-            <option value="3">Trabajador</option>
-            <option value="4">Cliente</option>
-          </select>
-        </div>
+        function cerrarModal() {
+          modal.style.display = 'none';
+        }
 
-        <button type="submit" id="btnAgregarUsuario">Agregar usuario <i class="fa fa-user-plus"></i></button>
-      </form>
-    </section>
+        // Cerrar si se hace clic fuera del modal
+        window.onclick = function (event) {
+          if (event.target == modal) {
+            cerrarModal();
+          }
+        }
 
-    <!-- Tabla CRUD -->
-    <section class="crud">
-      <table>
-        <thead>
-          <tr>
-            <th>ID</th><th>Nombre</th><th>Usuario</th><th>Correo</th><th>Teléfono</th><th>Cédula</th>
-            <th>Hotel</th><th>Habitación</th><th>Cargo</th><th>Acciones</th>
-          </tr>
-        </thead>
-        <tbody>
-          <% if (usuarios.length > 0) { %>
-            <% usuarios.forEach(u => { %>
-              <tr>
-                <td><%= u.id %></td>
-                <td><%= u.nombre_apellido %></td>
-                <td><%= u.usuario %></td>
-                <td><%= u.email %></td>
-                <td><%= u.telefono %></td>
-                <td><%= u.cedula %></td>
-                <td><%= u.hotel_nombre %></td>
-                <td><%= u.habitacion_numero %></td>
-                <td>
-                  <%= u.id_cargo === 1 ? 'Superusuario' :
-                      u.id_cargo === 2 ? 'Administrador' :
-                      u.id_cargo === 3 ? 'Trabajador' :
-                      u.id_cargo === 4 ? 'Cliente' : u.id_cargo %>
-                </td>
-                <td>
-                  <% if (u.id_cargo === 1) { %>
-                    <a href="#" onclick="eliminarAdmin('<%= u.id %>')" class="fa fa-trash" title="Eliminar"></a>
-                  <% } else { %>
-                    <a href="#" onclick="eliminarUsuario('<%= u.id %>')" class="fa fa-trash" title="Eliminar"></a>
-                  <% } %>
-                </td>
-              </tr>
-            <% }) %>
-          <% } else { %>
-            <tr><td colspan="10">No hay usuarios registrados.</td></tr>
-          <% } %>
-        </tbody>
-      </table>
-    </section>
-  </main>
-
-<%- include('../partials/footer') %>
-
-</div>
-
-<script src="/js/script.js"></script>
-<script src="/js/user_admin.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+        // --- Lógica de Eliminar ---
+        function eliminarUsuario(id) {
+          Swal.fire({
+            title: '¿Estás seguro?',
+            text: "Se eliminará el usuario y sus datos asociados (pagos, asignaciones).",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#d33',
+            cancelButtonColor: '#3085d6',
+            confirmButtonText: 'Sí, eliminar',
+            cancelButtonText: 'Cancelar'
+          }).then((result) => {
+            if (result.isConfirmed) {
+              fetch('/super/eliminarUsuario/' + id)
+                .then(response => {
+                  if (response.ok) {
+                    Swal.fire('¡Eliminado!', 'El usuario ha sido eliminado.', 'success')
+                      .then(() => location.reload());
+                  } else {
+                    Swal.fire('Error', 'No se pudo eliminar el usuario.', 'error');
+                  }
+                });
+            }
+          })
+        }
+      </script>

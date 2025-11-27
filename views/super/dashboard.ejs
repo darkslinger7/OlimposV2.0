@@ -1,54 +1,116 @@
 <%- include('../partials/header') %>
 <%- include('../partials/sidebar_super') %>
-<%- include('../partials/navbar', { titulo: 'Panel del Superusuario', icono: 'fa-home', usuario }) %>
+<%- include('../partials/navbar', { titulo: 'Panel Principal', icono: 'fa-home', usuario }) %>
+
+<style>
+    body::before {
+        content: "";
+        position: fixed;
+        top: 0; left: 0; width: 100%; height: 100%;
+        z-index: -1;
+        /* Aquí cargamos tu imagen nueva */
+        background-image: url('/img/Superfondo.jpg');
+        background-size: cover;
+        background-position: center;
+        opacity: 0.15; /* Opacidad baja para que no moleste al leer */
+        filter: grayscale(10%); /* Un toque serio/profesional */
+    }
+</style>
 
 <div class="main-content">
   <main class="content">
-    <section class="dashboard-cards">
-      <div class="card">
-        <div class="card-icon bg-blue"><i class="fas fa-hotel"></i></div>
-        <div class="card-info">
-          <h3>Hoteles</h3>
-          <p><a href="/super/hoteles">Ver</a></p>
+    
+    <section class="tarjetas-panel">
+      
+      <div class="tarjeta">
+        <div class="icono-tarjeta fondo-azul">
+          <i class="fas fa-hotel"></i>
+        </div>
+        <div class="info-tarjeta">
+          <h3>Hoteles Registrados</h3>
+          <p><%= stats.hoteles %></p>
+          <a href="/super/hoteles" style="font-size: 0.9rem; color: #3498db; text-decoration: none;">Ver listado &rarr;</a>
         </div>
       </div>
-      <div class="card">
-        <div class="card-icon bg-blue"><i class="fas fa-tools"></i></div>
-        <div class="card-info">
-          <h3>Gestión de Hoteles</h3>
-          <p><a href="/super/gestion-hoteles">Ver</a></p>
-        </div>
-      </div>
-      <div class="card">
-        <div class="card-icon bg-blue"><i class="fas fa-door-open"></i></div>
-        <div class="card-info">
-          <h3>Habitaciones</h3>
-          <p><a href="/super/habitaciones">Ver</a></p>
-        </div>
-      </div>
-      <div class="card">
-        <div class="card-icon bg-blue"><i class="fas fa-users-cog"></i></div>
-        <div class="card-info">
-          <h3>Trabajadores</h3>
-          <p><a href="/super/trabajadores">Ver</a></p>
-        </div>
-      </div>
-      <div class="card">
-        <div class="card-icon bg-blue"><i class="fas fa-money-check-alt"></i></div>
-        <div class="card-info">
-          <h3>Pagos</h3>
-          <p><a href="/super/pagos">Ver</a></p>
-        </div>
-      </div>
-      <div class="card">
-        <div class="card-icon bg-blue"><i class="fas fa-chart-line"></i></div>
-        <div class="card-info">
-          <h3>Estadísticas</h3>
-          <p><a href="/super/estadisticas">Ver</a></p>
-        </div>
-      </div>
-    </section>
-  </main>
-</div>
 
-<%- include('../partials/footer') %>
+      <div class="tarjeta">
+        <div class="icono-tarjeta fondo-verde">
+          <i class="fas fa-bed"></i>
+        </div>
+        <div class="info-tarjeta">
+          <h3>Habitaciones</h3>
+          <p><%= stats.habitaciones %></p>
+          <a href="/super/habitaciones" style="font-size: 0.9rem; color: #27ae60; text-decoration: none;">Gestionar &rarr;</a>
+        </div>
+      </div>
+
+      <div class="tarjeta">
+        <div class="icono-tarjeta fondo-naranja">
+          <i class="fas fa-id-badge"></i>
+        </div>
+        <div class="info-tarjeta">
+          <h3>Trabajadores</h3>
+          <p><%= stats.trabajadores %></p>
+          <a href="/super/trabajadores" style="font-size: 0.9rem; color: #e67e22; text-decoration: none;">Ver nómina &rarr;</a>
+        </div>
+      </div>
+
+      <div class="tarjeta">
+        <div class="icono-tarjeta fondo-rojo">
+          <i class="fas fa-users"></i>
+        </div>
+        <div class="info-tarjeta">
+          <h3>Total Usuarios</h3>
+          <p><%= stats.usuarios %></p>
+          <a href="/super/usuarios" style="font-size: 0.9rem; color: #c0392b; text-decoration: none;">Administrar &rarr;</a>
+        </div>
+      </div>
+
+      <div class="tarjeta">
+        <div class="icono-tarjeta" style="background: #8e44ad;">
+          <i class="fas fa-money-check-alt"></i>
+        </div>
+        <div class="info-tarjeta">
+          <h3>Pagos</h3>
+          <p style="font-size: 1.1rem; color: #8e44ad;">Finanzas</p>
+          <a href="/super/pagos" style="font-size: 0.9rem; color: #8e44ad; text-decoration: none;">Cuentas por pagar &rarr;</a>
+        </div>
+      </div>
+
+      <div class="tarjeta">
+        <div class="icono-tarjeta" style="background: #2c3e50;">
+          <i class="fas fa-chart-pie"></i>
+        </div>
+        <div class="info-tarjeta">
+          <h3>Reportes</h3>
+          <p style="font-size: 1.1rem; color: #2c3e50;">Estadísticas</p>
+          <a href="/super/estadisticas" style="font-size: 0.9rem; color: #2c3e50; text-decoration: none;">Ver rentabilidad &rarr;</a>
+        </div>
+      </div>
+
+      <div class="tarjeta">
+        <div class="icono-tarjeta" style="background: #f39c12;">
+          <i class="fas fa-bullhorn"></i>
+        </div>
+        <div class="info-tarjeta">
+          <h3>Avisos</h3>
+          <p style="font-size: 1.1rem; color: #f39c12;">Comunicados</p>
+          <a href="/super/avisos" style="font-size: 0.9rem; color: #f39c12; text-decoration: none;">Publicar nuevo &rarr;</a>
+        </div>
+      </div>
+
+    </section>
+
+    <div style="background: rgba(255, 255, 255, 0.95); padding: 2rem; border-radius: 8px; border-top: 3px solid #3498db; box-shadow: 0 2px 8px rgba(0,0,0,0.05); margin-top: 20px;">
+        <h3 style="color: #2c3e50;"><i class="fas fa-chart-line"></i> Resumen de Operaciones</h3>
+        <p style="color: #666; margin-top: 10px;">
+            El sistema <strong>Olimpos</strong> está operando correctamente. Actualmente gestionas 
+            <strong><%= stats.hoteles %> hoteles</strong> y una red de <strong><%= stats.usuarios %> usuarios</strong>.
+            Usa las tarjetas superiores para acceder rápidamente a cada módulo de gestión.
+        </p>
+    </div>
+
+  </main>
+  
+  <%- include('../partials/footer') %>
+</div>

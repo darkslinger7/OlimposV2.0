@@ -1,42 +1,177 @@
 <%- include('../partials/header') %>
-<%- include('../partials/sidebar_super') %>
-<%- include('../partials/navbar', { titulo: 'Pagos a Administradores', icono: 'fa-money-check-alt', usuario }) %>
+  <%- include('../partials/sidebar_super') %>
+    <%- include('../partials/navbar', { titulo: 'Control Financiero' , icono: 'fa-money-check-alt' , usuario }) %>
 
-<main class="content">
-  <section class="crud">
-    <h2>Pagos pendientes por hotel</h2>
-    <table>
-      <thead>
-        <tr>
-          <th>Hotel</th>
-          <th>Administrador</th>
-          <th>Sueldo Admin</th>
-          <th>Sueldos Trabajadores</th>
-          <th>Total a Transferir</th>
-          <th>Acción</th>
-        </tr>
-      </thead>
-      <tbody>
-        <% pagos.forEach(p => { %>
-          <tr>
-            <td><%= p.hotel %></td>
-            <td><%= p.administrador %></td>
-            <td>$<%= p.sueldo_admin %></td>
-            <td>$<%= p.sueldos_trabajadores %></td>
-            <td><strong>$<%= p.total_pago %></strong></td>
-            <td>
-              <form method="POST" action="/super/pagos/registrar">
-                <input type="hidden" name="id_hotel" value="<%= p.id_hotel %>">
-                <input type="hidden" name="id_admin" value="<%= p.id_admin %>">
-                <input type="hidden" name="monto" value="<%= p.total_pago %>">
-                <button type="submit">Registrar pago</button>
-              </form>
-            </td>
-          </tr>
-        <% }) %>
-      </tbody>
-    </table>
-  </section>
-</main>
+      <style>
+        .money-badge {
+          font-family: 'Consolas', monospace;
+          font-weight: bold;
+          color: #27ae60;
+          background: #e9f7ef;
+          padding: 4px 8px;
+          border-radius: 4px;
+          border: 1px solid #d4efdf;
+        }
 
-<%- include('../partials/footer') %>
+        .total-highlight {
+          font-size: 1.1rem;
+          color: #2c3e50;
+          font-weight: 800;
+        }
+
+        .pagos-grid {
+          display: grid;
+          gap: 2rem;
+        }
+      </style>
+
+      <div class="main-content">
+        <main class="content">
+
+          <section class="tarjetas-panel">
+            <div class="tarjeta">
+              <div class="icono-tarjeta" style="background: #8e44ad;">
+                <i class="fas fa-file-invoice-dollar"></i>
+              </div>
+              <div class="info-tarjeta">
+                <h3>Administradores por Pagar</h3>
+                <p>
+                  <%= pagosPendientes.length %>
+                </p>
+              </div>
+            </div>
+          </section>
+
+          <div class="pagos-grid">
+
+            <section class="crud" style="border-top: 3px solid #8e44ad;">
+              <h3 style="color: #8e44ad; border-bottom: 2px solid #eee; padding-bottom: 10px;">
+                <i class="fas fa-calculator"></i> Nómina de Administradores
+              </h3>
+              <p style="font-size: 0.9rem; color: #666; margin-bottom: 15px;">
+                El monto total incluye el sueldo del administrador más la nómina de los trabajadores de su hotel (gastos
+                operativos).
+              </p>
+
+              <table>
+                <thead>
+                  <tr>
+                    <th>Hotel</th>
+                    <th>Administrador</th>
+                    <th>Sueldo Admin</th>
+                    <th>Gastos Nomina (Trabajadores)</th>
+                    <th>Total a Transferir</th>
+                    <th>Acción</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <% if (pagosPendientes.length> 0) { %>
+                    <% pagosPendientes.forEach(p=> { %>
+                      <tr>
+                        <td><strong>
+                            <%= p.hotel_nombre %>
+                          </strong></td>
+                        <td>
+                          <%= p.admin_nombre %><br>
+                            <small style="color:#aaa;">ID: <%= p.id_admin %></small>
+                        </td>
+                        <td><span class="money-badge">$<%= p.sueldo_admin %></span></td>
+                        <td><span class="money-badge"
+                            style="color: #e67e22; background: #fdf2e9; border-color: #fae5d3;">$<%= p.gastos_nomina %>
+                              </span></td>
+
+                        <td class="total-highlight">$<%= p.total_a_pagar %>
+                        </td>
+
+                        <td>
+                          <form id="form-pago-<%= p.id_admin %>" method="POST" action="/super/pagos/registrar">
+                            <input type="hidden" name="id_hotel" value="<%= p.id_hotel %>">
+                            <input type="hidden" name="id_admin" value="<%= p.id_admin %>">
+                            <input type="hidden" name="monto" value="<%= p.total_a_pagar %>">
+
+                            <button type="button"
+                              onclick="confirmarPago('<%= p.id_admin %>', '<%= p.admin_nombre %>', '<%= p.total_a_pagar %>')"
+                              style="background: #27ae60; color: white; border: none; padding: 8px 15px; border-radius: 4px; cursor: pointer;">
+                              <i class="fas fa-check-circle"></i> Pagar
+                            </button>
+                          </form>
+                        </td>
+                      </tr>
+                      <% }) %>
+                        <% } else { %>
+                          <tr>
+                            <td colspan="6" style="text-align: center; padding: 20px;">No hay pagos pendientes o
+                              administradores asignados.</td>
+                          </tr>
+                          <% } %>
+                </tbody>
+              </table>
+            </section>
+
+            <section class="crud">
+              <h3 style="color: #7f8c8d; border-bottom: 2px solid #eee;"><i class="fas fa-history"></i> Historial de
+                Transferencias</h3>
+              <table>
+                <thead>
+                  <tr>
+                    <th>ID Pago</th>
+                    <th>Fecha</th>
+                    <th>Hotel</th>
+                    <th>Destinatario</th>
+                    <th>Monto Transferido</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <% if (historial.length> 0) { %>
+                    <% historial.forEach(h=> { %>
+                      <tr>
+                        <td>#<%= h.id_pago %>
+                        </td>
+                        <td>
+                          <%= new Date(h.fecha_pago).toLocaleDateString() %> <small>
+                              <%= new Date(h.fecha_pago).toLocaleTimeString() %>
+                            </small>
+                        </td>
+                        <td>
+                          <%= h.hotel_nombre %>
+                        </td>
+                        <td>
+                          <%= h.admin_nombre %>
+                        </td>
+                        <td><strong style="color: #27ae60;">$<%= h.monto %></strong></td>
+                      </tr>
+                      <% }) %>
+                        <% } else { %>
+                          <tr>
+                            <td colspan="5" style="text-align: center;">No hay historial de pagos registrado.</td>
+                          </tr>
+                          <% } %>
+                </tbody>
+              </table>
+            </section>
+
+          </div>
+
+        </main>
+        <%- include('../partials/footer') %>
+      </div>
+
+      <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+      <script>
+        function confirmarPago(idForm, nombreAdmin, monto) {
+          Swal.fire({
+            title: '¿Confirmar transferencia?',
+            html: `Se registrará un pago de <strong>$${monto}</strong> a favor de <strong>${nombreAdmin}</strong>.`,
+            icon: 'question',
+            showCancelButton: true,
+            confirmButtonColor: '#27ae60',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Sí, registrar pago',
+            cancelButtonText: 'Cancelar'
+          }).then((result) => {
+            if (result.isConfirmed) {
+              document.getElementById('form-pago-' + idForm).submit();
+            }
+          })
+        }
+      </script>

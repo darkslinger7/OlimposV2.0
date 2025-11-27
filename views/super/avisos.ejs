@@ -1,45 +1,119 @@
 <%- include('../partials/header') %>
 <%- include('../partials/sidebar_super') %>
-<%- include('../partials/navbar', { titulo: 'Avisos', icono: 'fa-bullhorn', usuario }) %>
+<%- include('../partials/navbar', { titulo: 'Comunicados Globales', icono: 'fa-bullhorn', usuario }) %>
 
-<main class="content">
-  <section class="agg">
-    <form method="POST" action="/super/avisos">
-      <input name="titulo" placeholder="Título del aviso" required>
-      <textarea name="mensaje" placeholder="Mensaje del aviso" required></textarea>
-      <select name="rol_destino" required>
-        <option value="administrador">Administradores</option>
-        <option value="cliente">Clientes</option>
-      </select>
-      <button type="submit">Publicar Aviso</button>
-    </form>
-  </section>
+<style>
+    /* Badges para roles */
+    .badge-destino { padding: 4px 8px; border-radius: 4px; color: white; font-size: 0.85rem; text-transform: capitalize; }
+    .dest-todos { background: #8e44ad; }
+    .dest-admin { background: #3498db; }
+    .dest-cliente { background: #2ecc71; }
+    .dest-trabajador { background: #e67e22; }
+</style>
 
-  <section class="crud">
-    <table>
-      <thead>
-        <tr><th>Título</th><th>Mensaje</th><th>Fecha</th><th>Para</th><th>Emisor</th><th>Acciones</th></tr>
-      </thead>
-      <tbody>
-        <% avisos.forEach(a => { %>
-          <tr>
-            <td><%= a.titulo %></td>
-            <td><%= a.mensaje %></td>
-            <td><%= new Date(a.fecha).toLocaleString() %></td>
-            <td><%= a.rol_destino %></td>
-            <td><%= a.emisor %></td>
-            <td><a href="#" onclick="eliminarAviso('<%= a.id_aviso %>')">🗑️</a></td>
-          </tr>
-        <% }) %>
-      </tbody>
-    </table>
-  </section>
-</main>
+<div class="main-content">
+  <main class="content">
 
-<script>
-function eliminarAviso(id) {
-  fetch('/super/avisos/eliminar/' + id).then(() => location.reload());
-}
-</script>
+    <section class="agg">
+        <h3 style="margin-bottom: 15px; color: #34495e;"><i class="fas fa-paper-plane"></i> Enviar Nuevo Comunicado</h3>
+        
+        <form method="POST" action="/super/avisos/publicar" class="login-form" style="border-top-color: #34495e;">
+            <div class="form-group">
+                <label>Asunto / Título</label>
+                <input name="titulo" placeholder="Ej. Mantenimiento General de Plataforma" required>
+            </div>
 
+            <div class="form-group">
+                <label>Dirigido a:</label>
+                <select name="rol_destino" required>
+                    <option value="administrador">Solo Administradores</option>
+                    <option value="trabajador">Todo el Personal (Trabajadores)</option>
+                    <option value="cliente">Todos los Huéspedes</option>
+                    <option value="todos">Toda la Red (Global)</option>
+                </select>
+            </div>
+
+            <div class="form-group" style="grid-column: 1 / -1;">
+                <label>Mensaje</label>
+                <textarea name="mensaje" rows="4" placeholder="Escriba el comunicado oficial..." required 
+                    style="width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 4px; resize: vertical;"></textarea>
+            </div>
+
+            <div class="form-group" style="grid-column: 1 / -1;">
+                <label style="display: flex; align-items: center; gap: 10px; cursor: pointer; background: #f0fff4; padding: 10px; border-radius: 5px; border: 1px solid #c6f6d5;">
+                    <input type="checkbox" name="enviar_whatsapp" value="1" style="width: auto; height: 18px;"> 
+                    <span style="color: #27ae60; font-weight: bold; font-size: 1rem;">
+                        <i class="fab fa-whatsapp" style="font-size: 1.2rem;"></i> Enviar notificación a los celulares registrados
+                    </span>
+                </label>
+                <small style="color: #7f8c8d; margin-left: 30px;">
+                    * Esto enviará un mensaje de WhatsApp a todos los usuarios del grupo seleccionado.
+                </small>
+            </div>
+
+            <button type="submit" style="background: #34495e; grid-column: 1 / -1;">Publicar Aviso</button>
+        </form>
+    </section>
+
+    <section class="crud">
+        <h3 style="color: #34495e; border-bottom: 2px solid #eee;">Historial de Publicaciones</h3>
+        <table>
+            <thead>
+                <tr>
+                    <th>Fecha</th>
+                    <th>Título</th>
+                    <th>Mensaje</th>
+                    <th>Destinatario</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                <% if (avisos.length > 0) { %>
+                    <% avisos.forEach(a => { %>
+                        <tr>
+                            <td><%= new Date(a.fecha).toLocaleDateString() %></td>
+                            <td><strong><%= a.titulo %></strong></td>
+                            <td style="max-width: 300px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;"><%= a.mensaje %></td>
+                            <td>
+                                <span class="badge-destino <%= 
+                                    a.rol_destino === 'administrador' ? 'dest-admin' : 
+                                    (a.rol_destino === 'cliente' ? 'dest-cliente' : 
+                                    (a.rol_destino === 'trabajador' ? 'dest-trabajador' : 'dest-todos')) %>">
+                                    <%= a.rol_destino %>
+                                </span>
+                            </td>
+                            <td>
+                                <a href="#" onclick="eliminarAviso('<%= a.id_aviso %>')" class="fa fa-trash" 
+                                   title="Eliminar" style="color: #c0392b; font-size: 1.2rem;"></a>
+                            </td>
+                        </tr>
+                    <% }) %>
+                <% } else { %>
+                    <tr><td colspan="5" style="text-align: center;">No hay avisos publicados.</td></tr>
+                <% } %>
+            </tbody>
+        </table>
+    </section>
+
+  </main>
 <%- include('../partials/footer') %>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script>
+    function eliminarAviso(id) {
+        Swal.fire({
+            title: '¿Eliminar comunicado?',
+            text: "Desaparecerá del panel de todos los usuarios.",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#d33',
+            cancelButtonColor: '#3085d6',
+            confirmButtonText: 'Sí, eliminar'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                fetch('/super/avisos/eliminar/' + id).then(() => location.reload());
+            }
+        })
+    }
+</script>

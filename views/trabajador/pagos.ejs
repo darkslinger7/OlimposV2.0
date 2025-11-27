@@ -1,0 +1,36 @@
+<%- include('../partials/header') %>
+<%- include('../partials/sidebar_trabajador') %>
+<%- include('../partials/navbar', { titulo: 'Información de Pagos', icono: 'fa-file-invoice-dollar', usuario }) %>
+
+<div class="main-content">
+  <main class="content">
+
+    <div style="max-width: 600px; margin: 0 auto; background: white; padding: 40px; border-radius: 8px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); text-align: center;">
+        <i class="fas fa-check-circle" style="font-size: 4rem; color: #27ae60; margin-bottom: 20px;"></i>
+        
+        <h2 style="color: #2c3e50; margin-bottom: 5px;">Estado de Nómina: ACTIVO</h2>
+        <p style="color: #7f8c8d; margin-bottom: 30px;">Hotel <%= info.hotel %></p>
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; text-align: left; background: #f8f9fa; padding: 20px; border-radius: 8px;">
+            <div>
+                <small style="color: #aaa;">Cargo:</small>
+                <div style="font-weight: bold; color: #333;"><%= info.cargo || 'Sin Asignar' %></div>
+            </div>
+            <div>
+                <small style="color: #aaa;">Fecha Ingreso:</small>
+                <div style="font-weight: bold; color: #333;"><%= info.fecha_ingreso %></div>
+            </div>
+            <div style="grid-column: 1 / -1; border-top: 1px solid #ddd; padding-top: 15px; margin-top: 5px;">
+                <small style="color: #aaa;">Sueldo Mensual Asignado:</small>
+                <div style="font-size: 2rem; font-weight: bold; color: #27ae60;">$<%= info.sueldo %></div>
+            </div>
+        </div>
+
+        <p style="margin-top: 20px; font-size: 0.9rem; color: #999;">
+            * Los pagos son gestionados directamente por la administración del hotel. Si tienes dudas, contacta a tu gerente.
+        </p>
+    </div>
+
+  </main>
+<%- include('../partials/footer') %>
+</div>

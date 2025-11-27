@@ -1,0 +1,58 @@
+<aside class="sidebar" aria-label="Menú lateral">
+    <div class="sidebar-header">
+        <a href="/administrador/dashboard" style="text-decoration: none;">
+            <div class="logo">Olimpos<span>Manager</span></div>
+        </a>
+        <button class="sidebar-toggle" aria-label="Ocultar menú">
+            <i class="fas fa-bars"></i>
+        </button>
+    </div>
+
+    <nav>
+        <ul>
+            <li>
+                <a href="/administrador/dashboard" class="<%= titulo === 'Panel de Control' ? 'active' : '' %>">
+                    <i class="fas fa-home"></i> Dashboard
+                </a>
+            </li>
+            
+            <li>
+                <a href="/administrador/habitaciones" class="<%= titulo === 'Gestión de Habitaciones' ? 'active' : '' %>">
+                    <i class="fas fa-bed"></i> Habitaciones
+                </a>
+            </li>
+            <li>
+                <a href="/administrador/trabajadores" class="<%= titulo === 'Gestión de Personal' ? 'active' : '' %>">
+                    <i class="fas fa-id-badge"></i> Trabajadores
+                </a>
+            </li>
+            <li>
+                <a href="/administrador/clientes" class="<%= titulo === 'Gestión de Huéspedes' ? 'active' : '' %>">
+                    <i class="fas fa-suitcase"></i> Huéspedes
+                </a>
+            </li>
+
+            <li>
+                <a href="/administrador/pagos" class="<%= titulo === 'Control de Pagos' ? 'active' : '' %>">
+                    <i class="fas fa-cash-register"></i> Pagos
+                </a>
+            </li>
+            <li>
+                <a href="/administrador/estadisticas" class="<%= titulo === 'Estadísticas del Hotel' ? 'active' : '' %>">
+                    <i class="fas fa-chart-line"></i> Estadísticas
+                </a>
+            </li>
+            <li>
+                <a href="/administrador/avisos" class="<%= titulo === 'Centro de Avisos' ? 'active' : '' %>">
+                    <i class="fas fa-bell"></i> Avisos
+                </a>
+            </li>
+        </ul>
+    </nav>
+
+    <div class="salir">
+        <a href="/login/salir">
+            <i class="fas fa-sign-out-alt"></i> Cerrar Turno
+        </a>
+    </div>
+</aside>

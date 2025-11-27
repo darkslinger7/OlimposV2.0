@@ -1,0 +1,171 @@
+<%- include('../partials/header') %>
+<%- include('../partials/sidebar_admin') %>
+<%- include('../partials/navbar', { titulo: 'Estadísticas y Métricas', icono: 'fa-chart-line', usuario }) %>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<style>
+    .charts-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+        gap: 2rem;
+        margin-top: 2rem;
+    }
+    .chart-card {
+        background: white;
+        padding: 20px;
+        border-radius: 8px;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        border-top: 3px solid #ddd;
+    }
+    .chart-header {
+        display: flex; justify-content: space-between; align-items: center;
+        margin-bottom: 15px; color: #2c3e50; font-weight: 600;
+    }
+</style>
+
+<div class="main-content">
+  <main class="content">
+
+    <section class="tarjetas-panel">
+        <div class="tarjeta">
+            <div class="icono-tarjeta" style="background: #2980b9;">
+                <i class="fas fa-money-bill-wave"></i>
+            </div>
+            <div class="info-tarjeta">
+                <h3>Ingresos (Últimos 6 meses)</h3>
+                <p>$<%= datos.resumen.totalIngresosHist.toLocaleString('en-US', {minimumFractionDigits: 2}) %></p>
+            </div>
+        </div>
+        <div class="tarjeta">
+            <div class="icono-tarjeta" style="background: #8e44ad;">
+                <i class="fas fa-user-check"></i>
+            </div>
+            <div class="info-tarjeta">
+                <h3>Total Huéspedes Recientes</h3>
+                <p><%= datos.resumen.totalHuespedesHist %></p>
+            </div>
+        </div>
+    </section>
+
+    <div class="charts-grid">
+        
+        <div class="chart-card" style="border-top-color: #27ae60;">
+            <div class="chart-header">
+                <span><i class="fas fa-chart-bar"></i> Evolución de Ingresos</span>
+            </div>
+            <div style="height: 300px;">
+                <canvas id="ingresosChart"></canvas>
+            </div>
+        </div>
+
+        <div class="chart-card" style="border-top-color: #e67e22;">
+            <div class="chart-header">
+                <span><i class="fas fa-pie-chart"></i> Estado de Habitaciones</span>
+            </div>
+            <div style="height: 300px; display: flex; justify-content: center;">
+                <canvas id="habitacionesChart"></canvas>
+            </div>
+        </div>
+
+        <div class="chart-card" style="border-top-color: #3498db; grid-column: 1 / -1;">
+            <div class="chart-header">
+                <span><i class="fas fa-users"></i> Afluencia de Huéspedes</span>
+            </div>
+            <div style="height: 300px;">
+                <canvas id="clientesChart"></canvas>
+            </div>
+        </div>
+
+    </div>
+
+  </main>
+<%- include('../partials/footer') %>
+</div>
+
+<script id="data-ingresos" type="application/json">
+    <%- JSON.stringify(datos.ingresos) %>
+</script>
+<script id="data-huespedes" type="application/json">
+    <%- JSON.stringify(datos.huespedes) %>
+</script>
+<script id="data-habitaciones" type="application/json">
+    <%- JSON.stringify(datos.habitaciones) %>
+</script>
+
+<script>
+    // 1. Recuperar datos
+    const rawIngresos = JSON.parse(document.getElementById('data-ingresos').textContent);
+    const rawHuespedes = JSON.parse(document.getElementById('data-huespedes').textContent);
+    const rawHabitaciones = JSON.parse(document.getElementById('data-habitaciones').textContent);
+
+    // 2. Configurar Gráfico de INGRESOS (Barras)
+    const ctxIngresos = document.getElementById('ingresosChart').getContext('2d');
+    new Chart(ctxIngresos, {
+        type: 'bar',
+        data: {
+            labels: rawIngresos.map(d => d.mes),
+            datasets: [{
+                label: 'Ingresos ($)',
+                data: rawIngresos.map(d => d.total),
+                backgroundColor: 'rgba(39, 174, 96, 0.6)',
+                borderColor: 'rgba(39, 174, 96, 1)',
+                borderWidth: 1
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: { y: { beginAtZero: true } }
+        }
+    });
+
+    // 3. Configurar Gráfico de HABITACIONES (Dona)
+    // Mapeamos los estados a colores fijos
+    const mapColores = { 'disponible': '#27ae60', 'ocupada': '#c0392b', 'mantenimiento': '#f39c12' };
+    const labelsHab = rawHabitaciones.map(d => d.estado.charAt(0).toUpperCase() + d.estado.slice(1));
+    const dataHab = rawHabitaciones.map(d => d.cantidad);
+    const colorsHab = rawHabitaciones.map(d => mapColores[d.estado] || '#95a5a6');
+
+    const ctxHab = document.getElementById('habitacionesChart').getContext('2d');
+    new Chart(ctxHab, {
+        type: 'doughnut',
+        data: {
+            labels: labelsHab,
+            datasets: [{
+                data: dataHab,
+                backgroundColor: colorsHab,
+                borderWidth: 0
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: { position: 'right' }
+            }
+        }
+    });
+
+    // 4. Configurar Gráfico de HUÉSPEDES (Línea)
+    const ctxClientes = document.getElementById('clientesChart').getContext('2d');
+    new Chart(ctxClientes, {
+        type: 'line',
+        data: {
+            labels: rawHuespedes.map(d => d.mes),
+            datasets: [{
+                label: 'Nuevos Huéspedes',
+                data: rawHuespedes.map(d => d.total),
+                borderColor: '#3498db',
+                backgroundColor: 'rgba(52, 152, 219, 0.1)',
+                tension: 0.4, // Curvatura de la línea
+                fill: true
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: { y: { beginAtZero: true, ticks: { stepSize: 1 } } }
+        }
+    });
+</script>

@@ -1,0 +1,51 @@
+<%- include('../partials/header') %>
+<%- include('../partials/sidebar_trabajador') %>
+<%- include('../partials/navbar', { titulo: 'Mis Tareas Pendientes', icono: 'fa-tasks', usuario }) %>
+
+<style>
+    .task-item { 
+        background: white; border-radius: 8px; padding: 20px; margin-bottom: 15px; 
+        border-left: 6px solid #e67e22; box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+        display: flex; justify-content: space-between; align-items: center;
+        transition: transform 0.2s;
+    }
+    .task-item:hover { transform: translateY(-2px); }
+</style>
+
+<div class="main-content">
+  <main class="content">
+
+    <h3 style="margin-bottom: 20px; color: #2c3e50;">Órdenes de Trabajo Activas</h3>
+
+    <% if (tareas.length > 0) { %>
+        <% tareas.forEach(t => { %>
+            <div class="task-item">
+                <div style="flex: 1;">
+                    <small style="color: #e67e22; font-weight: bold;">ASIGNADO POR: <%= t.asignado_por %></small>
+                    <h4 style="margin: 5px 0 10px 0; font-size: 1.1rem;"><%= t.titulo %></h4>
+                    <p style="color: #666; margin: 0;"><%= t.mensaje %></p>
+                    <small style="color: #aaa; margin-top: 10px; display: block;">
+                        <i class="far fa-clock"></i> <%= new Date(t.fecha).toLocaleString() %>
+                    </small>
+                </div>
+                
+                <div style="margin-left: 20px;">
+                    <a href="/trabajador/tareas/completar/<%= t.id_aviso %>" 
+                       onclick="return confirm('¿Confirmas que terminaste esta tarea?')"
+                       style="background: #27ae60; color: white; text-decoration: none; padding: 10px 20px; border-radius: 30px; font-weight: bold; display: flex; align-items: center; gap: 8px;">
+                        <i class="fas fa-check"></i> Terminar
+                    </a>
+                </div>
+            </div>
+        <% }) %>
+    <% } else { %>
+        <div style="text-align: center; padding: 50px; background: white; border-radius: 8px;">
+            <i class="fas fa-mug-hot" style="font-size: 3rem; color: #ccc; margin-bottom: 15px;"></i>
+            <h3 style="color: #7f8c8d;">¡Todo al día!</h3>
+            <p style="color: #aaa;">No tienes tareas pendientes por ahora.</p>
+        </div>
+    <% } %>
+
+  </main>
+<%- include('../partials/footer') %>
+</div>

@@ -1,273 +1,234 @@
-<!DOCTYPE html>
-<html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="Panel de administración para gestionar usuarios y configuraciones">
-    <title>ConVivir - Administración</title>
-    <link rel="stylesheet" href="../css/admin.css">
-    <link rel="stylesheet" href="../css/pagos.css">
-    <link rel="shortcut icon" href="../img/LOGO.png" type="image/x-icon">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-</head>
-<body>
-    <div class="layout">
-        <aside class="sidebar" aria-label="Menú lateral">
-            <div class="sidebar-header">
-                <a href="/admin">
-                    <div class="logo">Admin<span>Panel</span></div>
-                </a>
-                <button class="sidebar-toggle" aria-label="Ocultar menú" aria-expanded="true">
-                    <i class="fas fa-bars"></i>
-                </button>
-            </div>
-            <nav>
-                <ul>
-                    <li>
-                        <a href="/admin">
-                            <i class="fas fa-home"></i>
-                            <span>Inicio</span>
-                        </a>
-                    </li>
-                    <li>
-                        <a href="/admin/user_admin">
-                            <i class="fas fa-users"></i>
-                            <span>Usuarios</span>
-                        </a>
-                    </li>
-                    <li>
-                        <a href="/admin/pagos">
-                            <i class="fas fa-money-bill-wave"></i>
-                            <span>Pagos</span>
-                        </a>
-                    </li>
-                    <li>
-                        <a href="/admin/estadisticas">
-                            <i class="fas fa-chart-bar"></i>
-                            <span>Estadísticas</span>
-                        </a>
-                    </li>
-                    <li>
-                        <a href="/admin/proveedores">
-                            <i class="fas fa-truck"></i>
-                            <span>Proveedores</span>
-                        </a>
-                    </li>
-                    <li>
-                        <a href="/admin/avisos">
-                            <i class="fas fa-bullhorn"></i>
-                            <span>Avisos</span>
-                        </a>
-                    </li>
-                </ul>
-            </nav>
-            <div class="salir">
-                <a href="/">
-                    <i class="fas fa-sign-out-alt"></i>
-                    <span>Salir</span>
-                </a>
-            </div>
-        </aside>
+<%- include('../partials/header') %>
+    <%- include('../partials/sidebar_admin') %>
+        <%- include('../partials/navbar', { titulo: 'Finanzas del Hotel' , icono: 'fa-cash-register' , usuario }) %>
 
-        <div class="main-content">
-            <!-- Header -->
-            <header class="navbar" aria-label="Menú principal">
-                <div class="navbar-left">
-                    <button class="menu-toggle" aria-label="Mostrar menú">
-                        <i class="fas fa-bars"></i>
-                    </button>
-                    <h1>Pagos <i class="fa fa-money-bill-wave"></i></h1>
-                </div>
-                <div class="navbar-right">
-                    <div class="user-profile">
-                        <i class="fas fa-user-shield"></i>
-                        <span class="username">Administrador</span>
-                    </div>
-                </div>
-            </header>
-            <main class="payments-container">
-                <!-- Resumen de Pagos -->
-                <section class="summary-grid">
-                    <%
-                        let totalPagos = 0;
-                        pagos.forEach(function(pago) {
-                            totalPagos += Number(pago.monto_pago) || 0;
-                        });
-                        // Formatear el totalPagos con separación de miles y decimales
-                        let PagosT = totalPagos.toLocaleString('de-DE', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
-                    %>
-                    <div class="summary-card total">
-                        <div class="summary-title">Monto Total Bs</div>
-                        <div class="summary-amount"><%= PagosT %>Bs</div>
-                    </div>
-                    <div class="summary-card pending">
-                        <div class="summary-title">Precio del dolar</div>
-                        <div class="summary-amount">
-                            <input type="number" name="precio-dolar" id="precio-dolar" step="0.01" min="0">
-                            <button type="button" id="aceptar-precio">Aceptar</button>
-                            <p id="mostrar-precio"></p>
-                        </div>
-                    </div>
-                    <div class="summary-card pending">
-                        <div class="summary-title">Monto Total USD</div>
-                        <div class="summary-amount" id="total-usd">0 $</div>
-                    </div>
-                </section>
-                <!-- Filtros -->
-                <section class="filters-section">
-                    <div class="filters-row">
-                        <div class="filter-group search-box">
-                            <label>Buscar</label>
-                            <input type="text" id="search-input" placeholder="Buscar por Cedula o Referencia...">
-                        </div>
-                        <div class="filter-group">
-                            <label>Método de Pago</label>
-                            <select id="metodo-select">
-                                <option value="">Todos</option>
-                                <option value="Efectivo">Efectivo</option>
-                                <option value="Transferencia">Transferencia Bancaria</option>
-                                <option value="Pago_Movil">Pago Móvil</option>
-                                <option value="zelle">Zelle</option>
-                                <option value="paypal">PayPal</option>
-                                <option value="Binance">Binance</option>
-                                <option value="Binance">Zinli</option>
-                            </select>
-                        </div>
-                        <div class="filter-group">
-                            <label>Desde</label>
-                            <input type="date" id="desde-input">
-                        </div>
-                        <div class="filter-group">
-                            <label>Hasta</label>
-                            <input type="date" id="hasta-input">
-                        </div>
-                        <div class="filter-group">
-                            <label>Torre</label>
-                            <select name="edi" id="edi">
-                                <option value="">Seleccione una opción</option>
-                                <option value="A">Torre A</option>
-                                <option value="B">Torre B</option>
-                                <option value="C">Torre C</option>
-                                <option value="D">Torre D</option>
-                            </select>
-                        </div>
-                        <div class="filter-group">
-                            <button class="btn-buscar" id="filtrar-btn"><i class="fas fa-search"></i>Filtrar</button>
-                            <button class="btn-limpiar" id="limpiar-btn"><i class="fas fa-eraser"></i> Limpiar</button>
-                        </div>
-                    </div>
-                </section>
+            <style>
+                .balance-positivo {
+                    color: #2980b9;
+                    /* Azul */
+                    font-weight: bold;
+                    font-size: 1.1rem;
+                }
 
-                <!-- Tabla de Pagos -->
-                <section class="payments-table-section">
-                    <div class="table-header">
-                        <div class="table-title">Historial de Pagos</div>
-                        <div class="table-actions">
-                            <button class="btn-secondary" id="export-excel">
-                                <i class="fas fa-file-excel"></i> Excel
-                            </button>
-                            <button class="btn-secondary" id="export-pdf">
-                                <i class="fas fa-file-pdf"></i> PDF
-                            </button>
+                .balance-negativo {
+                    color: #c0392b;
+                    /* Rojo */
+                    font-weight: bold;
+                    font-size: 1.1rem;
+                }
+
+                /* Estilos específicos para finanzas */
+                .monto-positivo {
+                    color: #27ae60;
+                    font-weight: bold;
+                    font-family: 'Consolas', monospace;
+                }
+
+                .monto-negativo {
+                    color: #c0392b;
+                    font-weight: bold;
+                    font-family: 'Consolas', monospace;
+                }
+
+                .modal {
+                    display: none;
+                    position: fixed;
+                    z-index: 2000;
+                    left: 0;
+                    top: 0;
+                    width: 100%;
+                    height: 100%;
+                    background: rgba(0, 0, 0, 0.5);
+                    justify-content: center;
+                    align-items: center;
+                }
+
+                .modal-content {
+                    background: white;
+                    padding: 25px;
+                    border-radius: 8px;
+                    width: 90%;
+                    max-width: 500px;
+                    animation: slideDown 0.3s;
+                }
+
+                @keyframes slideDown {
+                    from {
+                        transform: translateY(-30px);
+                        opacity: 0;
+                    }
+
+                    to {
+                        transform: translateY(0);
+                        opacity: 1;
+                    }
+                }
+
+                .close-modal {
+                    float: right;
+                    font-size: 24px;
+                    cursor: pointer;
+                    color: #aaa;
+                }
+            </style>
+
+            <div class="main-content">
+                <main class="content">
+
+                    <section class="tarjetas-panel">
+                        <div class="tarjeta">
+                            <div class="icono-tarjeta" style="background: #27ae60;">
+                                <i class="fas fa-arrow-up"></i>
+                            </div>
+                            <div class="info-tarjeta">
+                                <h3>Ingresos Totales</h3>
+                                <p class="monto-positivo">+$<%= finanzas.ingresos.toLocaleString('en-US',
+                                        {minimumFractionDigits: 2}) %>
+                                </p>
+                            </div>
                         </div>
+
+                        <div class="tarjeta">
+                            <div class="icono-tarjeta" style="background: #c0392b;">
+                                <i class="fas fa-users"></i>
+                            </div>
+                            <div class="info-tarjeta">
+                                <h3>Nómina Mensual</h3>
+                                <p class="monto-negativo">-$<%= finanzas.egresos.toLocaleString('en-US',
+                                        {minimumFractionDigits: 2}) %>
+                                </p>
+                            </div>
+                        </div>
+
+                        <div class="tarjeta">
+                            <div class="icono-tarjeta" style="background: #2980b9;">
+                                <i class="fas fa-wallet"></i>
+                            </div>
+                            <div class="info-tarjeta">
+                                <h3>Balance Operativo</h3>
+                                <p class="<%= finanzas.balance >= 0 ? 'balance-positivo' : 'balance-negativo' %>">
+                                    $<%= finanzas.balance.toLocaleString('en-US', {minimumFractionDigits: 2}) %>
+                                </p>
+                                </p>
+                            </div>
+                        </div>
+                    </section>
+
+                    <div style="margin-bottom: 20px; text-align: right;">
+                        <button onclick="abrirModalPago()"
+                            style="background: #27ae60; color: white; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer; font-weight: bold; box-shadow: 0 2px 5px rgba(0,0,0,0.1);">
+                            <i class="fas fa-plus-circle"></i> Registrar Ingreso
+                        </button>
                     </div>
-                    <table class="payments-table">
-                        <thead>
-                            <tr>
-                                <th>N° Referencia</th>
-                                <th>Residente</th>
-                                <th>Cedula</th>
-                                <th>Fecha</th>
-                                <th>Monto</th>
-                                <th>Método</th>
-                                <th>Banco Emisor</th>
-                                <th>Torre</th>
-                                <th>Apartamento</th>
-                                <th>Acciones</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <% if(pagos.length > 0){ %>
-                                <% pagos.forEach(function(pago){  %>
+
+                    <section class="crud">
+                        <h3 style="color: #34495e; border-bottom: 2px solid #eee;">Movimientos Recientes</h3>
+                        <table>
+                            <thead>
                                 <tr>
-                                    <td><%= pago.num_referencia %></td>
-                                    <th><%= pago.nombre_p %></th>
-                                    <th><%= pago.cedula %></th>
-                                    <th><%= pago.fecha_pago ? new Date(pago.fecha_pago).toLocaleDateString('es-ES') : '' %></th>
-                                    <th><%= Number(pago.monto_pago).toLocaleString('de-DE', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) %> Bs</th>
-                                    <th><%= pago.tipo_pago %></th>
-                                    <th><%= pago.bancoEmisor %></th>
-                                    <th><%= pago.Torre %></th>
-                                    <th><%= pago.apartamento%></th>
-                                    
-                                    <td>
-                                    <div class="actions-cell">
-                                        <button class="btn-secondary generar_factura" title="Factura">
-                                            <i class="fas fa-file-invoice"></i>
-                                        </button>
-                                        <button class="btn-secondary dele_Pago" title="Eliminar">
-                                            <a href="#" 
-                                                class="fa fa-trash" title="Eliminar" onclick="eliminarPago('<%= pago.id_pago %>'); return false;">
-                                            </a>
-                                        </button>
-                                    </div>
-                                </td>
+                                    <th>Fecha</th>
+                                    <th>Referencia</th>
+                                    <th>Cliente</th>
+                                    <th>Método</th>
+                                    <th>Concepto</th>
+                                    <th>Monto</th>
                                 </tr>
-                                <% }); %>
-                            <% } else { %>
-                                <tr>
-                                    <td colspan="10">No hay pagoss registrados.</td>
-                                </tr>
-                            <% } %>
-                        </tbody>
-                    </table>
-                </section>
-            </main>
-        </div>
-    </div>
-    <script src="../js/script.js"></script>
-    <script src="../js/pagos.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-    <script src="../js/facturaCreate.js"></script>
-    <script>
-        document.getElementById('aceptar-precio').addEventListener('click', function() {
-            const precioDolar = parseFloat(document.getElementById('precio-dolar').value);
-            const totalBs = '<%= totalPagos %>';
-            if (precioDolar > 0) {
-                const totalUsd = totalBs / precioDolar;
-                const totalUsdFormatted = totalUsd.toLocaleString('de-DE', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
-                document.getElementById('total-usd').textContent = totalUsdFormatted + ' $';
-                document.getElementById('mostrar-precio').textContent = 'Precio actual: ' + precioDolar.toLocaleString('de-DE', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + ' Bs/$';
-            } else {
-                alert('Por favor ingrese un precio del dólar válido');
-            }
-        });
-        
-        document.getElementById('precio-dolar').addEventListener('keypress', function(e) {
-            if (e.key === 'Enter') {
-                document.getElementById('aceptar-precio').click();
-            }
-        });
+                            </thead>
+                            <tbody>
+                                <% if (pagos.length> 0) { %>
+                                    <% pagos.forEach(p=> { %>
+                                        <tr>
+                                            <td>
+                                                <%= new Date(p.fecha_pago).toLocaleDateString() %>
+                                            </td>
+                                            <td>#<%= p.num_referencia %>
+                                            </td>
+                                            <td>
+                                                <strong>
+                                                    <%= p.nombre_p %>
+                                                </strong><br>
+                                                <small style="color:#aaa;">
+                                                    <%= p.cedula %>
+                                                </small>
+                                            </td>
+                                            <td>
+                                                <%= p.tipo_pago %>
+                                            </td>
+                                            <td>
+                                                <%= p.bancoEmisor || 'Servicios' %>
+                                            </td>
+                                            <td class="monto-positivo">+$<%= p.monto_pago %>
+                                            </td>
+                                        </tr>
+                                        <% }) %>
+                                            <% } else { %>
+                                                <tr>
+                                                    <td colspan="6" style="text-align: center;">No hay pagos registrados
+                                                        aún.</td>
+                                                </tr>
+                                                <% } %>
+                            </tbody>
+                        </table>
+                    </section>
 
-        const torreSelect = document.getElementById('edi');
-        const pagosTable = document.querySelector('.payments-table');
-        function buscarPorTorre() {
-        const torreSeleccionada = torreSelect.value;
+                </main>
+                <%- include('../partials/footer') %>
+            </div>
 
-        // Filtrar la tabla de pagos según la torre seleccionada
-        const filas = pagosTable.querySelectorAll('tr');
-        filas.forEach((fila) => {
-            const torre = fila.querySelector('th:nth-child(8)').textContent;
-            if (torre !== torreSeleccionada && torreSeleccionada !== '') {
-            fila.style.display = 'none';
-            } else {
-            fila.style.display = '';
-            }
-        });
-        }
+            <div id="modalPago" class="modal">
+                <div class="modal-content">
+                    <span class="close-modal" onclick="cerrarModal()">&times;</span>
+                    <h3 style="color: #27ae60; margin-bottom: 20px;"><i class="fas fa-file-invoice-dollar"></i> Nuevo
+                        Ingreso</h3>
 
-        torreSelect.addEventListener('change', buscarPorTorre);
-    </script>
-</body>
-</html>
+                    <form method="POST" action="/administrador/pagos/registrar" autocomplete="off">
+                        <div class="form-group">
+                            <label>Cédula del Cliente</label>
+                            <input type="text" name="cedula" placeholder="V-12345678" required
+                                style="width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 4px;">
+                        </div>
+
+                        <div class="form-group" style="margin-top: 15px;">
+                            <label>Monto ($)</label>
+                            <input type="number" name="monto" step="0.01" required
+                                style="width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 4px;">
+                        </div>
+
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-top: 15px;">
+                            <div class="form-group">
+                                <label>Referencia</label>
+                                <input type="text" name="referencia" required
+                                    style="width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 4px;">
+                            </div>
+                            <div class="form-group">
+                                <label>Método</label>
+                                <select name="tipo"
+                                    style="width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 4px;">
+                                    <option value="Efectivo">Efectivo</option>
+                                    <option value="Pago Movil">Pago Móvil</option>
+                                    <option value="Transferencia">Transferencia</option>
+                                    <option value="Zelle">Zelle</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="form-group" style="margin-top: 15px;">
+                            <label>Concepto / Nota</label>
+                            <input type="text" name="concepto" placeholder="Ej. Hospedaje, Servicio extra..."
+                                style="width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 4px;">
+                        </div>
+
+                        <button type="submit"
+                            style="width: 100%; margin-top: 20px; background: #27ae60; color: white; border: none; padding: 12px; border-radius: 4px; cursor: pointer; font-weight: bold;">
+                            Registrar Pago
+                        </button>
+                    </form>
+                </div>
+            </div>
+
+            <script>
+                const modal = document.getElementById('modalPago');
+                function abrirModalPago() { modal.style.display = 'flex'; }
+                function cerrarModal() { modal.style.display = 'none'; }
+                window.onclick = function (e) { if (e.target == modal) cerrarModal(); }
+            </script>

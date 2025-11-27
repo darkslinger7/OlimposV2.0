@@ -1,0 +1,44 @@
+<aside class="sidebar" aria-label="Menú lateral">
+    <div class="sidebar-header">
+        <a href="/trabajador/dashboard" style="text-decoration: none;">
+            <div class="logo">Olimpos<span>Staff</span></div>
+        </a>
+        <button class="sidebar-toggle" aria-label="Ocultar menú">
+            <i class="fas fa-bars"></i>
+        </button>
+    </div>
+
+    <nav>
+        <ul>
+            <li>
+                <a href="/trabajador/dashboard" class="<%= titulo === 'Mi Panel' ? 'active' : '' %>">
+                    <i class="fas fa-home"></i> Dashboard
+                </a>
+            </li>
+            
+            <li>
+                <a href="/trabajador/avisos" class="<%= titulo === 'Mis Tareas y Avisos' ? 'active' : '' %>">
+                    <i class="fas fa-clipboard-list"></i> Tareas / Avisos
+                </a>
+            </li>
+
+            <li>
+                <a href="/trabajador/pagos" class="<%= titulo === 'Mi Nómina' ? 'active' : '' %>">
+                    <i class="fas fa-file-invoice-dollar"></i> Mis Pagos
+                </a>
+            </li>
+
+            <li>
+                <a href="/trabajador/perfil" class="<%= titulo === 'Mi Perfil' ? 'active' : '' %>">
+                    <i class="fas fa-user-circle"></i> Mi Perfil
+                </a>
+            </li>
+        </ul>
+    </nav>
+
+    <div class="salir">
+        <a href="/login/salir">
+            <i class="fas fa-sign-out-alt"></i> Salir
+        </a>
+    </div>
+</aside>

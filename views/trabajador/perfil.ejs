@@ -1,0 +1,66 @@
+<%- include('../partials/header') %>
+<%- include('../partials/sidebar_trabajador') %>
+<%- include('../partials/navbar', { titulo: 'Mi Perfil', icono: 'fa-user-circle', usuario }) %>
+
+<div class="main-content">
+  <main class="content">
+
+    <div style="max-width: 800px; margin: 0 auto;">
+        <div style="background: white; padding: 30px; border-radius: 8px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); display: flex; gap: 30px; align-items: flex-start;">
+            
+            <div style="text-align: center; width: 200px;">
+                <div style="width: 120px; height: 120px; background: #34495e; color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 3rem; margin: 0 auto 15px;">
+                    <i class="fas fa-user"></i>
+                </div>
+                <h3 style="margin-bottom: 5px;"><%= datos.nombre_apellido %></h3>
+                <span class="badge" style="background: #e67e22;">Trabajador</span>
+                <p style="margin-top: 10px; font-size: 0.9rem; color: #7f8c8d;">Miembro desde: <%= datos.fecha %></p>
+            </div>
+
+            <div style="flex: 1;">
+                <h3 style="color: #2c3e50; border-bottom: 2px solid #eee; padding-bottom: 10px; margin-bottom: 20px;">
+                    <i class="fas fa-edit"></i> Editar Información
+                </h3>
+
+                <form method="POST" action="/trabajador/perfil/actualizar" autocomplete="off">
+                    <div class="form-group">
+                        <label>Nombre Completo</label>
+                        <input type="text" name="nombre" value="<%= datos.nombre_apellido %>" required style="width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 4px;">
+                    </div>
+
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-top: 15px;">
+                        <div class="form-group">
+                            <label>Usuario (Login)</label>
+                            <input type="text" name="user" value="<%= datos.usuario %>" required style="width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 4px;">
+                        </div>
+                        <div class="form-group">
+                            <label>Teléfono</label>
+                            <input type="text" name="telefono" value="<%= datos.telefono %>" style="width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 4px;">
+                        </div>
+                    </div>
+
+                    <div class="form-group" style="margin-top: 15px;">
+                        <label>Correo Electrónico</label>
+                        <input type="email" name="email" value="<%= datos.email %>" required style="width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 4px;">
+                    </div>
+
+                    <div style="background: #f9f9f9; padding: 15px; border-radius: 6px; margin-top: 20px; border: 1px solid #eee;">
+                        <h4 style="margin-bottom: 10px; color: #c0392b;"><i class="fas fa-lock"></i> Seguridad</h4>
+                        <div class="form-group">
+                            <label>Nueva Contraseña (Opcional)</label>
+                            <input type="password" name="pass_new" placeholder="Dejar en blanco para no cambiar" style="width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 4px;">
+                        </div>
+                    </div>
+
+                    <button type="submit" style="background: #34495e; color: white; border: none; padding: 12px 25px; border-radius: 4px; margin-top: 20px; cursor: pointer; font-weight: bold; float: right;">
+                        Guardar Cambios
+                    </button>
+                </form>
+            </div>
+
+        </div>
+    </div>
+
+  </main>
+<%- include('../partials/footer') %>
+</div>

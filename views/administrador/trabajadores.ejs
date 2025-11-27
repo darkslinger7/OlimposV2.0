@@ -1,0 +1,311 @@
+<%- include('../partials/header') %>
+    <%- include('../partials/sidebar_admin') %>
+        <%- include('../partials/navbar', { titulo: 'Gestión de Nómina' , icono: 'fa-users' , usuario }) %>
+
+            <style>
+                /* Estilos de Modal (Reutilizables) */
+                .modal {
+                    display: none;
+                    position: fixed;
+                    z-index: 2000;
+                    left: 0;
+                    top: 0;
+                    width: 100%;
+                    height: 100%;
+                    background: rgba(0, 0, 0, 0.5);
+                    justify-content: center;
+                    align-items: center;
+                }
+
+                .modal-content {
+                    background: white;
+                    padding: 25px;
+                    border-radius: 8px;
+                    width: 90%;
+                    max-width: 600px;
+                    position: relative;
+                    animation: slideDown 0.3s;
+                    max-height: 90vh;
+                    overflow-y: auto;
+                }
+
+                @keyframes slideDown {
+                    from {
+                        transform: translateY(-30px);
+                        opacity: 0;
+                    }
+
+                    to {
+                        transform: translateY(0);
+                        opacity: 1;
+                    }
+                }
+
+                .close-modal {
+                    position: absolute;
+                    right: 20px;
+                    top: 15px;
+                    font-size: 24px;
+                    cursor: pointer;
+                    color: #aaa;
+                }
+
+                .close-modal:hover {
+                    color: #333;
+                }
+            </style>
+
+            <div class="main-content">
+                <main class="content">
+
+                    <section class="tarjetas-panel">
+                        <div class="tarjeta">
+                            <div class="icono-tarjeta" style="background: #27ae60;">
+                                <i class="fas fa-file-invoice-dollar"></i>
+                            </div>
+                            <div class="info-tarjeta">
+                                <h3>Costo Mensual Nómina</h3>
+                                <p>$<%= totalNomina.toLocaleString('en-US', {minimumFractionDigits: 2}) %>
+                                </p>
+                            </div>
+                        </div>
+                        <div class="tarjeta">
+                            <div class="icono-tarjeta fondo-naranja">
+                                <i class="fas fa-user-tie"></i>
+                            </div>
+                            <div class="info-tarjeta">
+                                <h3>Empleados Activos</h3>
+                                <p>
+                                    <%= trabajadores.length %>
+                                </p>
+                            </div>
+                        </div>
+                    </section>
+
+                    <div
+                        style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                        <h3 style="color: #34495e; margin: 0;"><i class="fas fa-list"></i> Listado de Personal</h3>
+                        <button onclick="abrirModalRegistro()"
+                            style="background: #3498db; color: white; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer; font-weight: bold;">
+                            <i class="fas fa-user-plus"></i> Nuevo Contrato
+                        </button>
+                    </div>
+
+                    <section class="crud">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Empleado</th>
+                                    <th>Contacto</th>
+                                    <th>Cargo</th>
+                                    <th>Sueldo</th>
+                                    <th>Ingreso</th>
+                                    <th>Acciones</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <% if (trabajadores.length> 0) { %>
+                                    <% trabajadores.forEach(t=> { %>
+                                        <tr>
+                                            <td>
+                                                <strong>
+                                                    <%= t.nombre_apellido %>
+                                                </strong><br>
+                                                <small style="color: #aaa;">CI: <%= t.cedula %></small>
+                                            </td>
+                                            <td>
+                                                <i class="fas fa-phone" style="font-size:0.8rem"></i>
+                                                <%= t.telefono %><br>
+
+                                                    <a href="https://wa.me/<%= t.telefono.replace(/[^0-9]/g, '') %>"
+                                                        target="_blank"
+                                                        style="color: #25D366; text-decoration: none; font-weight: bold; font-size: 0.9rem;">
+                                                        <i class="fab fa-whatsapp"></i> Chat
+                                                    </a>
+
+                                                    <br><small>
+                                                        <%= t.email %>
+                                                    </small>
+                                            </td>
+                                            <td>
+                                                <% if(t.nombre_trabajo) { %>
+                                                    <span class="badge" style="background: #3498db;">
+                                                        <%= t.nombre_trabajo %>
+                                                    </span>
+                                                    <% } else { %>
+                                                        <span class="badge" style="background: #95a5a6;">Sin
+                                                            Asignar</span>
+                                                        <% } %>
+                                            </td>
+                                            <td style="color: #27ae60; font-weight: bold;">$<%= t.sueldo %>
+                                            </td>
+                                            <td>
+                                                <%= t.fecha %>
+                                            </td>
+                                            <td>
+                                                <button class="btn-sm"
+                                                    style="background: #f39c12; border: none; color: white; padding: 5px 10px; border-radius: 4px; cursor: pointer;"
+                                                    onclick="abrirModalNomina('<%= t.id %>', '<%= t.nombre_apellido %>', '<%= t.sueldo %>', '<%= t.id_trabajo %>')">
+                                                    <i class="fas fa-edit"></i>
+                                                </button>
+                                                <button class="btn-sm"
+                                                    style="background: #c0392b; border: none; color: white; padding: 5px 10px; border-radius: 4px; cursor: pointer;"
+                                                    onclick="desvincularEmpleado('<%= t.id %>')">
+                                                    <i class="fas fa-user-times"></i>
+                                                </button>
+                                            </td>
+                                        </tr>
+                                        <% }) %>
+                                            <% } else { %>
+                                                <tr>
+                                                    <td colspan="6" style="text-align: center;">No hay empleados
+                                                        registrados.</td>
+                                                </tr>
+                                                <% } %>
+                            </tbody>
+                        </table>
+                    </section>
+
+                </main>
+                <%- include('../partials/footer') %>
+            </div>
+
+            <div id="modalRegistro" class="modal">
+                <div class="modal-content">
+                    <span class="close-modal" onclick="cerrarModal('modalRegistro')">&times;</span>
+                    <h3 style="color: #3498db; margin-bottom: 20px;"><i class="fas fa-user-plus"></i> Contratar Nuevo
+                        Personal</h3>
+
+                    <form method="POST" action="/administrador/trabajadores/registrar" autocomplete="off">
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+                            <div class="form-group">
+                                <label>Nombre Completo</label>
+                                <input type="text" name="name" required>
+                            </div>
+                            <div class="form-group">
+                                <label>Cédula de Identidad</label>
+                                <input type="text" name="cedula" required>
+                            </div>
+                            <div class="form-group">
+                                <label>Teléfono</label>
+                                <input type="text" name="telefono" value="+58">
+                            </div>
+                            <div class="form-group">
+                                <label>Correo Electrónico</label>
+                                <input type="email" name="email" required>
+                            </div>
+                            <div class="form-group">
+                                <label>Usuario (Login)</label>
+                                <input type="text" name="user" required>
+                            </div>
+                            <div class="form-group">
+                                <label>Contraseña</label>
+                                <input type="password" name="pass" required>
+                            </div>
+
+                            <div class="form-group">
+                                <label>Cargo Inicial</label>
+                                <select name="id_trabajo">
+                                    <option value="">-- Seleccionar luego --</option>
+                                    <% cargos.forEach(c=> { %>
+                                        <option value="<%= c.id_trabajo %>">
+                                            <%= c.nombre %>
+                                        </option>
+                                        <% }) %>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label>Sueldo Inicial ($)</label>
+                                <input type="number" name="sueldo" step="0.01" value="0">
+                            </div>
+                        </div>
+
+                        <button type="submit"
+                            style="width: 100%; margin-top: 20px; background: #3498db; color: white; border: none; padding: 12px; border-radius: 4px; cursor: pointer; font-weight: bold;">
+                            Registrar Empleado
+                        </button>
+                    </form>
+                </div>
+            </div>
+
+            <div id="modalNomina" class="modal">
+                <div class="modal-content" style="max-width: 400px;">
+                    <span class="close-modal" onclick="cerrarModal('modalNomina')">&times;</span>
+                    <h3 style="color: #f39c12; margin-bottom: 15px;"><i class="fas fa-money-check-alt"></i> Ajustar
+                        Cargo/Sueldo</h3>
+                    <p style="margin-bottom: 15px;">Empleado: <strong id="nombreEmpleado"></strong></p>
+
+                    <form method="POST" action="/administrador/trabajadores/asignar">
+                        <input type="hidden" name="id_usuario" id="inputUserId">
+
+                        <div class="form-group">
+                            <label>Cargo / Puesto:</label>
+                            <select name="id_trabajo" id="selectCargo" required style="width: 100%; padding: 8px;">
+                                <option value="" disabled>-- Seleccione --</option>
+                                <% cargos.forEach(c=> { %>
+                                    <option value="<%= c.id_trabajo %>">
+                                        <%= c.nombre %>
+                                    </option>
+                                    <% }) %>
+                            </select>
+                        </div>
+
+                        <div class="form-group" style="margin-top: 15px;">
+                            <label>Sueldo Mensual ($):</label>
+                            <input type="number" name="sueldo" id="inputSueldo" step="0.01" required
+                                style="width: 100%; padding: 8px;">
+                        </div>
+
+                        <button type="submit"
+                            style="width: 100%; background: #f39c12; color: white; border: none; padding: 10px; border-radius: 4px; cursor: pointer; margin-top: 20px;">
+                            Actualizar Datos
+                        </button>
+                    </form>
+                </div>
+            </div>
+
+            <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+            <script>
+                // Funciones para abrir/cerrar modales
+                function abrirModalRegistro() {
+                    document.getElementById('modalRegistro').style.display = 'flex';
+                }
+
+                function abrirModalNomina(id, nombre, sueldo, idTrabajo) {
+                    document.getElementById('inputUserId').value = id;
+                    document.getElementById('nombreEmpleado').innerText = nombre;
+                    document.getElementById('inputSueldo').value = sueldo;
+                    if (idTrabajo) document.getElementById('selectCargo').value = idTrabajo;
+                    document.getElementById('modalNomina').style.display = 'flex';
+                }
+
+                function cerrarModal(idModal) {
+                    document.getElementById(idModal).style.display = 'none';
+                }
+
+                // Cerrar al hacer clic fuera
+                window.onclick = function (e) {
+                    if (e.target.classList.contains('modal')) {
+                        e.target.style.display = 'none';
+                    }
+                }
+
+                function desvincularEmpleado(id) {
+                    Swal.fire({
+                        title: '¿Desvincular empleado?',
+                        text: "El usuario dejará de pertenecer a este hotel.",
+                        icon: 'warning',
+                        showCancelButton: true,
+                        confirmButtonColor: '#d33',
+                        confirmButtonText: 'Sí, desvincular'
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            fetch('/administrador/trabajadores/desvincular/' + id)
+                                .then(res => {
+                                    if (res.ok) location.reload();
+                                    else Swal.fire('Error', 'No se pudo completar la acción', 'error');
+                                });
+                        }
+                    })
+                }
+            </script>

@@ -3,7 +3,8 @@ const router = express.Router();
 const verificarCargo = require('../../middlewares/verificarCargo');
 const conexion = require('../../config/conexion');
 
-router.use(verificarCargo([3]));
+// Middleware: Solo Clientes (Rol 4)
+router.use(verificarCargo([4]));
 
 // --- VER PERFIL ---
 router.get('/perfil', (req, res) => {
@@ -13,11 +14,12 @@ router.get('/perfil', (req, res) => {
 
     conexion.query(sql, [idUsuario], (err, usuario) => {
         if (err) throw err;
-        res.render('trabajador/perfil', {
+        
+        res.render('cliente/perfil', {
             titulo: 'Mi Perfil',
-            icono: 'fa-user-circle',
-            usuario: req.session.usuario, // Sesión actual
-            datos: usuario[0] // Datos frescos de la BD
+            icono: 'fa-user-cog',
+            usuario: req.session.usuario,
+            datos: usuario[0]
         });
     });
 });
@@ -30,7 +32,7 @@ router.post('/perfil/actualizar', (req, res) => {
     let sql = `UPDATE inf_usuarios SET nombre_apellido=?, email=?, telefono=?, usuario=?`;
     let params = [nombre, email, telefono, user];
 
-    // Si escribió una nueva contraseña, la actualizamos
+    // Si el usuario escribió algo en "Nueva Contraseña", la actualizamos
     if (pass_new && pass_new.trim() !== '') {
         sql += `, clave=?`;
         params.push(pass_new);
@@ -45,13 +47,13 @@ router.post('/perfil/actualizar', (req, res) => {
             return res.status(500).send("Error al actualizar perfil");
         }
         
-        // Actualizamos la sesión con el nuevo nombre/usuario
+        // Actualizamos la sesión para que el nombre cambie en el navbar inmediatamente
         req.session.usuario.nombre_apellido = nombre;
         req.session.usuario.usuario = user;
         req.session.usuario.email = email;
         req.session.usuario.telefono = telefono;
 
-        res.redirect('/trabajador/perfil');
+        res.redirect('/cliente/perfil');
     });
 });
 

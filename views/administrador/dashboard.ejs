@@ -1,0 +1,80 @@
+<% 
+    let bgHotel = 'default.jpg'; 
+    // Validamos que nombreHotel exista para evitar errores
+    if (typeof nombreHotel !== 'undefined' && nombreHotel) {
+        let nombre = nombreHotel.toLowerCase().replace(/\s+/g, '');
+        if (nombre.includes('oasis')) bgHotel = 'Oasis.jpg';
+        else if (nombre.includes('atenea')) bgHotel = 'Atenea.jpg';
+        else if (nombre.includes('paraiso')) bgHotel = 'Paraiso.jpg';
+        else if (nombre.includes('brisas')) bgHotel = 'BrisasdelOcaso.png';
+        else if (nombre.includes('oso')) bgHotel = 'ElOso.png';
+    }
+%>
+
+<%- include('../partials/header') %>
+<%- include('../partials/sidebar_admin') %>
+<%- include('../partials/navbar', { titulo: 'Panel de Control', icono: 'fa-tachometer-alt', usuario }) %>
+
+<style>
+    body::before {
+        content: "";
+        position: fixed;
+        top: 0; left: 0; width: 100%; height: 100%;
+        z-index: -1;
+        background-image: url('/img/<%= bgHotel %>');
+        background-size: cover;
+        background-position: center;
+        opacity: 0.1;
+    }
+</style>
+
+<div class="main-content">
+  <main class="content">
+    
+    <section class="tarjetas-panel">
+      <div class="tarjeta">
+        <div class="icono-tarjeta fondo-azul"><i class="fas fa-bed"></i></div>
+        <div class="info-tarjeta">
+          <h3>Habitaciones</h3>
+          <p><%= stats.habitaciones %></p>
+          <div style="font-size: 0.8rem;">
+             <span style="color: #27ae60;"><%= stats.disponibles %> Libres</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="tarjeta">
+        <div class="icono-tarjeta fondo-naranja"><i class="fas fa-users"></i></div>
+        <div class="info-tarjeta">
+          <h3>Personal</h3>
+          <p><%= stats.trabajadores %></p>
+          <a href="/administrador/trabajadores" style="color: #e67e22; font-size: 0.9rem;">Gestionar &rarr;</a>
+        </div>
+      </div>
+
+      <div class="tarjeta">
+        <div class="icono-tarjeta fondo-verde"><i class="fas fa-suitcase"></i></div>
+        <div class="info-tarjeta">
+          <h3>Huéspedes</h3>
+          <p><%= stats.huespedes %></p>
+          <a href="/administrador/clientes" style="color: #27ae60; font-size: 0.9rem;">Ver registro &rarr;</a>
+        </div>
+      </div>
+    </section>
+
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px;">
+        <div class="crud" style="border-top-color: #2c3e50; background: rgba(255,255,255,0.9);">
+            <h3 style="color: #2c3e50; border-bottom: 1px solid #eee; padding-bottom: 10px;">
+                <i class="fas fa-building"></i> Mi Hotel
+            </h3>
+            <p style="color: #7f8c8d; margin-top: 10px;">Administrando:</p>
+            <h2 style="color: #34495e; margin: 5px 0;"><%= nombreHotel %></h2> 
+            <p style="font-size: 0.9rem; color: #7f8c8d;">
+                Panel de gestión operativa. Recuerda revisar los avisos pendientes.
+            </p>
+        </div>
+    </div>
+
+  </main>
+  <%- include('../partials/footer') %>
+</div>

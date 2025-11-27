@@ -1,0 +1,181 @@
+<%- include('../partials/header') %>
+<link rel="stylesheet" href="/css/super/usuarios.css"> <style>
+    .gestion-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 2rem;
+    }
+    .panel-seccion {
+        background: white;
+        padding: 1.5rem;
+        border-radius: 8px;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        margin-bottom: 2rem;
+        position: relative;
+        overflow: hidden;
+    }
+    .panel-seccion h3 {
+        margin-bottom: 1rem;
+        color: #2c3e50;
+        border-bottom: 2px solid #ecf0f1;
+        padding-bottom: 0.5rem;
+    }
+    .panel-full {
+        grid-column: 1 / -1;
+    }
+    .lista-items {
+        list-style: none;
+        padding: 0;
+    }
+    .lista-items li {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 10px;
+        border-bottom: 1px solid #eee;
+    }
+
+    .badge {
+        padding: 2px 6px; 
+        border-radius: 4px; 
+        font-size: 0.8rem; 
+        color: white;
+        text-transform: capitalize;
+    }
+    .badge-disponible { background: #27ae60; }
+    .badge-ocupada { background: #c0392b; }
+    .badge-mantenimiento { background: #f39c12; }
+</style>
+
+<%- include('../partials/sidebar_super') %>
+<%- include('../partials/navbar', { titulo: 'Gestión Avanzada: ' + hotel.nombre, icono: 'fa-cogs', usuario }) %>
+
+<div class="main-content">
+  <main class="content">
+
+    <div class="gestion-grid">
+        
+        <div class="panel-seccion">
+            <h3><i class="fas fa-edit"></i> Propiedades del Hotel</h3>
+            <form action="/super/gestion-hotel/editar/<%= hotel.id_hotel %>" method="POST">
+                <div class="form-group" style="margin-bottom: 10px;">
+                    <label>Nombre:</label>
+                    <input type="text" name="nombre" value="<%= hotel.nombre %>" required style="width: 100%; padding: 8px; margin-top: 5px;">
+                </div>
+                <div class="form-group" style="margin-bottom: 10px;">
+                    <label>Dirección:</label>
+                    <input type="text" name="direccion" value="<%= hotel.direccion %>" style="width: 100%; padding: 8px; margin-top: 5px;">
+                </div>
+                <div class="form-group" style="margin-bottom: 10px;">
+                    <label>Teléfono:</label>
+                    <input type="text" name="telefono" value="<%= hotel.telefono %>" style="width: 100%; padding: 8px; margin-top: 5px;">
+                </div>
+                <div class="form-group" style="margin-bottom: 10px;">
+                    <label>Email Contacto:</label>
+                    <input type="email" name="email" value="<%= hotel.email %>" style="width: 100%; padding: 8px; margin-top: 5px;">
+                </div>
+                <button type="submit" style="width:100%; padding: 10px; background: #f39c12; color: white; border: none; border-radius: 4px; cursor: pointer; font-weight: bold;">
+                    Actualizar Datos
+                </button>
+            </form>
+        </div>
+
+        <div class="panel-seccion">
+            <h3><i class="fas fa-users-cog"></i> Responsables (Admins)</h3>
+            
+            <ul class="lista-items">
+                <% if (adminsAsignados.length > 0) { %>
+                    <% adminsAsignados.forEach(admin => { %>
+                        <li>
+                            <div>
+                                <strong><%= admin.nombre_apellido %></strong><br>
+                                <small style="color: #7f8c8d;"><%= admin.usuario %></small>
+                            </div>
+                            <a href="/super/gestion-hotel/desvincular-admin/<%= admin.id %>/<%= hotel.id_hotel %>" 
+                               title="Desvincular" style="color: #e74c3c;">
+                                <i class="fas fa-user-times"></i>
+                            </a>
+                        </li>
+                    <% }) %>
+                <% } else { %>
+                    <li style="color: #7f8c8d;">No hay administradores asignados.</li>
+                <% } %>
+            </ul>
+
+            <hr style="margin: 15px 0; border: 0; border-top: 1px solid #eee;">
+            <form action="/super/gestion-hotel/asignar-admin" method="POST" style="display: flex; gap: 10px;">
+                <input type="hidden" name="id_hotel" value="<%= hotel.id_hotel %>">
+                <select name="id_usuario" required style="flex: 1; padding: 8px; border-radius: 4px; border: 1px solid #ccc;">
+                    <option value="" disabled selected>Seleccionar Admin libre...</option>
+                    <% adminsLibres.forEach(al => { %>
+                        <option value="<%= al.id %>"><%= al.nombre_apellido %></option>
+                    <% }) %>
+                </select>
+                <button type="submit" style="background: #27ae60; color: white; border: none; padding: 0 15px; border-radius: 4px; cursor: pointer;">
+                    <i class="fas fa-plus"></i> Asignar
+                </button>
+            </form>
+        </div>
+
+        <div class="panel-seccion panel-full">
+            <h3><i class="fas fa-chart-line"></i> Auditoría y Recursos</h3>
+            <div style="display: flex; gap: 2rem; margin-bottom: 1.5rem;">
+                <div style="background: #e8f8f5; padding: 15px; border-radius: 8px; flex: 1; text-align: center;">
+                    <h4 style="color: #27ae60; font-size: 2rem; margin:0;"><%= habitaciones.length %></h4>
+                    <span style="color: #555;">Habitaciones Totales</span>
+                </div>
+                <div style="background: #fef9e7; padding: 15px; border-radius: 8px; flex: 1; text-align: center;">
+                    <h4 style="color: #f39c12; font-size: 2rem; margin:0;">
+                        <%= habitaciones.filter(h => h.estado === 'disponible').length %>
+                    </h4>
+                    <span style="color: #555;">Disponibles</span>
+                </div>
+                <div style="background: #fdedec; padding: 15px; border-radius: 8px; flex: 1; text-align: center;">
+                    <h4 style="color: #c0392b; font-size: 2rem; margin:0;">
+                        <%= habitaciones.filter(h => h.estado === 'ocupada').length %>
+                    </h4>
+                    <span style="color: #555;">Ocupadas</span>
+                </div>
+            </div>
+
+            <table style="width: 100%; border-collapse: collapse; font-size: 0.9rem;">
+                <thead>
+                    <tr style="background: #2c3e50; color: white;">
+                        <th style="padding: 10px; text-align: left;">Número</th>
+                        <th style="padding: 10px; text-align: left;">Tipo</th>
+                        <th style="padding: 10px; text-align: left;">Precio</th>
+                        <th style="padding: 10px; text-align: left;">Estado</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <% if (habitaciones.length > 0) { %>
+                        <% habitaciones.slice(0, 5).forEach(hab => { %>
+                            <tr style="border-bottom: 1px solid #ddd;">
+                                <td style="padding: 10px;"><strong><%= hab.numero %></strong></td>
+                                <td style="padding: 10px;"><%= hab.tipo %></td>
+                                <td style="padding: 10px;">$<%= hab.precio %></td>
+                                <td style="padding: 10px;">
+                                    <span class="badge badge-<%= hab.estado %>">
+                                        <%= hab.estado %>
+                                    </span>
+                                </td>
+                            </tr>
+                        <% }) %>
+                    <% } else { %>
+                        <tr><td colspan="4" style="padding: 15px; text-align: center; color: #7f8c8d;">Este hotel aún no tiene habitaciones registradas.</td></tr>
+                    <% } %>
+                </tbody>
+            </table>
+            
+            <% if(habitaciones.length > 5) { %>
+                <div style="text-align: center; margin-top: 15px;">
+                    <small style="color: #7f8c8d;">Mostrando las primeras 5 habitaciones...</small>
+                </div>
+            <% } %>
+        </div>
+
+    </div>
+
+  </main>
+<%- include('../partials/footer') %>
+</div>

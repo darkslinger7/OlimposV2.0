@@ -5,65 +5,66 @@ const conexion = require('../../config/conexion');
 
 router.use(verificarCargo([1])); // Solo superusuario
 
-// Vista principal: muestra trabajadores y trabajos
+// --- VISTA PRINCIPAL ---
 router.get('/trabajadores', (req, res) => {
+  // 1. Obtener lista de trabajadores (Usuarios con rol 3)
   const sqlTrabajadores = `
-    SELECT u.id, u.nombre_apellido, u.sueldo, c.nombre AS cargo, t.nombre AS trabajo
+    SELECT u.id, u.nombre_apellido, u.cedula, u.telefono, u.sueldo, t.nombre AS nombre_trabajo
     FROM inf_usuarios u
-    JOIN cargo c ON u.id_cargo = c.id_cargo
     LEFT JOIN trabajos t ON u.id_trabajo = t.id_trabajo
     WHERE u.id_cargo = 3
+    ORDER BY u.id DESC
   `;
 
-  conexion.query(sqlTrabajadores, (err, listaTrabajadores) => {
+  conexion.query(sqlTrabajadores, (err, trabajadores) => {
     if (err) throw err;
 
-    conexion.query('SELECT * FROM trabajos', (err2, listaTrabajos) => {
+    // 2. Obtener lista de trabajos disponibles para el select
+    conexion.query('SELECT * FROM trabajos', (err2, trabajos) => {
       if (err2) throw err2;
 
       res.render('super/trabajadores', {
-        usuario: req.session.usuario,
-        trabajadores: listaTrabajadores,
-        trabajos: listaTrabajos
+        titulo: 'Gestión de Personal',
+        icono: 'fa-id-badge',
+        usuario: req.session.usuario || { nombre: 'Super Admin' },
+        trabajadores,
+        trabajos
       });
     });
   });
 });
 
-// Asignar trabajo y sueldo a trabajador
+// --- ASIGNAR TRABAJO Y SUELDO ---
 router.post('/trabajadores/asignar', (req, res) => {
   const { id_usuario, id_trabajo, sueldo } = req.body;
+  
+  // Actualizamos la tabla inf_usuarios
   const sql = 'UPDATE inf_usuarios SET id_trabajo = ?, sueldo = ? WHERE id = ?';
+  
   conexion.query(sql, [id_trabajo, sueldo, id_usuario], err => {
-    if (err) throw err;
+    if (err) {
+        console.error(err);
+        return res.status(500).send("Error al asignar trabajo");
+    }
     res.redirect('/super/trabajadores');
   });
 });
 
-// Registrar nuevo trabajo
+// --- REGISTRAR NUEVO TIPO DE TRABAJO (ROL) ---
 router.post('/trabajadores/registrarTrabajo', (req, res) => {
   const { nombre, descripcion } = req.body;
   const sql = 'INSERT INTO trabajos (nombre, descripcion) VALUES (?, ?)';
+  
   conexion.query(sql, [nombre, descripcion], err => {
     if (err) throw err;
     res.redirect('/super/trabajadores');
   });
 });
 
-// Editar trabajo
-router.post('/trabajadores/editarTrabajo', (req, res) => {
-  const { id_trabajo, nombre, descripcion } = req.body;
-  const sql = 'UPDATE trabajos SET nombre = ?, descripcion = ? WHERE id_trabajo = ?';
-  conexion.query(sql, [nombre, descripcion, id_trabajo], err => {
-    if (err) throw err;
-    res.redirect('/super/trabajadores');
-  });
-});
-
-// Eliminar trabajo
+// --- ELIMINAR TIPO DE TRABAJO ---
 router.get('/trabajadores/eliminarTrabajo/:id', (req, res) => {
-  const sql = 'DELETE FROM trabajos WHERE id_trabajo = ?';
-  conexion.query(sql, [req.params.id], err => {
+  const id = req.params.id;
+  conexion.query('DELETE FROM trabajos WHERE id_trabajo = ?', [id], err => {
     if (err) return res.status(500).send('Error al eliminar');
     res.sendStatus(200);
   });

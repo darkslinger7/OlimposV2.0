@@ -1,0 +1,50 @@
+<aside class="sidebar" aria-label="Menú lateral">
+    <div class="sidebar-header">
+        <a href="/cliente/dashboard" style="text-decoration: none;">
+            <div class="logo">Olimpos<span>Guest</span></div>
+        </a>
+        <button class="sidebar-toggle" aria-label="Ocultar menú">
+            <i class="fas fa-bars"></i>
+        </button>
+    </div>
+
+    <nav>
+        <ul>
+            <li>
+                <a href="/cliente/dashboard" class="<%= titulo === 'Mi Estancia' ? 'active' : '' %>">
+                    <i class="fas fa-home"></i> Inicio
+                </a>
+            </li>
+            
+            <li>
+                <a href="/cliente/habitacion" class="<%= titulo === 'Mi Habitación' || titulo === 'Detalles de la Habitación' ? 'active' : '' %>">
+                    <i class="fas fa-bed"></i> Mi Habitación
+                </a>
+            </li>
+
+            <li>
+                <a href="/cliente/avisos" class="<%= titulo === 'Atención al Cliente' || titulo === 'Reportes y Solicitudes' ? 'active' : '' %>">
+                    <i class="fas fa-concierge-bell"></i> Reportar / Avisos
+                </a>
+            </li>
+
+            <li>
+                <a href="/cliente/pagos" class="<%= titulo === 'Mis Pagos' || titulo === 'Reportar Pago' ? 'active' : '' %>">
+                    <i class="fas fa-credit-card"></i> Pagos
+                </a>
+            </li>
+
+            <li>
+                <a href="/cliente/perfil" class="<%= titulo === 'Mi Perfil' || titulo === 'Mi Perfil de Usuario' ? 'active' : '' %>">
+                    <i class="fas fa-user-circle"></i> Mi Perfil
+                </a>
+            </li>
+        </ul>
+    </nav>
+
+    <div class="salir">
+        <a href="/login/salir">
+            <i class="fas fa-sign-out-alt"></i> Cerrar Sesión
+        </a>
+    </div>
+</aside>

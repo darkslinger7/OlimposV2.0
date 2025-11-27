@@ -1,115 +1,59 @@
-<!DOCTYPE html>
-<html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="Panel de administración para gestionar usuarios y configuraciones">
-    <title>ConVivir - Usuarios</title>
-    <link rel="stylesheet" href="/css/admin.css">
-    <link rel="stylesheet" href="../css/avisos.css">
-    <link rel="shortcut icon" href="../img/LOGO.png" type="image/x-icon">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-</head>
-<body>
-    <div class="layout">
-        <aside class="sidebar" aria-label="Menú lateral">
-            <div class="sidebar-header">
-                <a href="/users"><div class="logo">User<span>Panel</span></div></a>
-                <button class="sidebar-toggle" aria-label="Ocultar menú" aria-expanded="true">
-                    <i class="fas fa-bars"></i>
-                </button>
-            </div>
-            <nav>
-                <ul>
-                    <li>
-                        <a href="/users">
-                            <i class="fas fa-home"></i>
-                            <span>Inicio</span>
-                        </a>
-                    </li>
-                    <li>
-                        <a href="./pagos_usu.html">
-                            <i class="fas fa-money-bill-wave"></i>
-                            <span>Pagos</span>
-                        </a>
-                    </li>
-                    <li>
-                        <a href="./avisos_usu.html">
-                            <i class="fas fa-bullhorn"></i>
-                            <span>Avisos</span>
-                        </a>
-                    </li>
-                </ul>
-            </nav>
-            <div class="salir">
-                <a href="/">
-                    <i class="fas fa-sign-out-alt"></i>
-                    <span>Salir</span>
-                </a>
-            </div>
-        </aside>
-        <div class="main-content">
-            <header class="navbar" aria-label="Menú principal">
-                <div class="navbar-left">
-                    <button class="menu-toggle" aria-label="Mostrar menú">
-                        <i class="fas fa-bars"></i>
-                    </button>
-                    <h1>Avisos <i class="fa fa-bullhorn "></i></h1>
-                </div>
-                <div class="navbar-right">
-                    <div class="user-profile">
-                        <i class="fas fa-user"></i>
-                        <span class="username">Usuario</span>
-                    </div>
-                </div>
-            </header>
-            <main class="content">
-                <section class="recent-activity">
-                    <table border="1">
-                        <thead>
-                            <tr>
-                                <th>Nombre</th>
-                                <th>Cedula</th>
-                                <th>Aviso</th>
-                                <th>Sector</th>
+<%- include('../partials/header') %>
+<%- include('../partials/sidebar_cliente') %>
+<%- include('../partials/navbar', { titulo: 'Reportes y Solicitudes', icono: 'fa-concierge-bell', usuario }) %>
 
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <% var encontrado = false; %>
-                            <% if (avisos.length > 0) { %>
-                                <% avisos.forEach(function(aviso) { %>
-                                    <% if (aviso.id_cargo === 1) { %>
-                                        <tr>
-                                            <td><%= aviso.nombre_apellido %></td>
-                                            <td><%= aviso.cedula %></td>
-                                            <td><button class="btn generar-aviso" data-nombre="<%= aviso.nombre_apellido %>" data-telefono="<%= aviso.telefono %>">Generar Aviso</button></td>
-                                            <td>Administración</td>
-                                        </tr>
-                                        <% encontrado = true; %>
-                                    <% } %>
-                                <% }); %>
-                                <% if (!encontrado) { %>
-                                    <tr>
-                                        <td colspan="5">No hay avisos registrados para el cargo de Administración.</td>
-                                    </tr>
-                                <% } %>
-                            <% } else { %>
-                                <tr>
-                                    <td colspan="5">No hay avisos registrados.</td>
-                                </tr>
-                            <% } %>
-                        </tbody>
-                    </table>
-                </section>
-            </main>
-            <footer class="footer">
-                <p>&copy; <%= new Date().getFullYear() %> Panel de Administración. Todos los derechos reservados.</p>
-            </footer>
-        </div>
+<div class="main-content">
+  <main class="content">
+
+    <div class="agg">
+        <h3 style="color: #c0392b; margin-bottom: 15px;"><i class="fas fa-bullhorn"></i> Reportar Incidencia</h3>
+        <form method="POST" action="/cliente/avisos/crear" class="login-form" style="border-top-color: #c0392b;">
+            <div class="form-group" style="grid-column: 1 / -1;">
+                <label>Asunto</label>
+                <select name="titulo" required style="width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 4px;">
+                    <option value="Limpieza">Solicitar Limpieza</option>
+                    <option value="Mantenimiento">Falla / Mantenimiento</option>
+                    <option value="Ruidos">Ruidos Molestos</option>
+                    <option value="Room Service">Servicio a la Habitación</option>
+                    <option value="Otro">Otro</option>
+                </select>
+            </div>
+            <div class="form-group" style="grid-column: 1 / -1;">
+                <label>Detalles</label>
+                <textarea name="mensaje" rows="3" placeholder="Describa su solicitud..." required style="width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 4px;"></textarea>
+            </div>
+            <button type="submit" style="background: #c0392b; width: 100%;">Enviar Reporte</button>
+        </form>
     </div>
-    <script src="/js/script.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-    <script src="/js/avisosUsers.js"></script>
-</body>
-</html>
+
+    <section class="crud">
+        <h3 style="color: #34495e; border-bottom: 2px solid #eee;">Mis Reportes Enviados</h3>
+        <table>
+            <thead>
+                <tr>
+                    <th>Fecha</th>
+                    <th>Asunto</th>
+                    <th>Mensaje</th>
+                    <th>Estado</th>
+                </tr>
+            </thead>
+            <tbody>
+                <% if (avisos.length > 0) { %>
+                    <% avisos.forEach(a => { %>
+                        <tr>
+                            <td><%= new Date(a.fecha).toLocaleDateString() %></td>
+                            <td><strong><%= a.titulo %></strong></td>
+                            <td><%= a.mensaje %></td>
+                            <td><span class="badge" style="background: #95a5a6;">Enviado</span></td>
+                        </tr>
+                    <% }) %>
+                <% } else { %>
+                    <tr><td colspan="4" style="text-align: center;">No has realizado reportes.</td></tr>
+                <% } %>
+            </tbody>
+        </table>
+    </section>
+
+  </main>
+<%- include('../partials/footer') %>
+</div>

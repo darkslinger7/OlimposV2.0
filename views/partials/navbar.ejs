@@ -1,19 +1,21 @@
 <header class="navbar" aria-label="Menú principal">
-  <div class="navbar-left">
-    <button class="menu-toggle" aria-label="Mostrar menú">
+  <div style="display: flex; align-items: center; gap: 15px;">
+
+    <button id="menu-toggle" class="menu-toggle" aria-label="Mostrar menú"
+      style="background: none; border: none; font-size: 1.2rem; cursor: pointer; color: #333;">
       <i class="fas fa-bars"></i>
     </button>
-    <h1><%= titulo %></h1>
+
+    <h1 style="font-size: 1.2rem; margin: 0; font-weight: 600; color: #2c3e50;">
+      <%= titulo %>
+    </h1>
   </div>
-  <div class="navbar-right">
-    <div class="user-profile">
-      <i class="fas fa-user-shield"></i>
-      <span class="username">
-        <%= usuario.id_cargo === 1 ? 'Superusuario' :
-            usuario.id_cargo === 2 ? 'Administrador' :
-            usuario.id_cargo === 3 ? 'Trabajador' :
-            usuario.id_cargo === 4 ? 'Cliente' : 'Usuario' %>
-      </span>
-    </div>
+
+  <div class="user-profile" style="display: flex; align-items: center; gap: 10px; color: #555;">
+    <span class="username" style="font-weight: 500; font-size: 0.95rem;">
+      <%= usuario.id_cargo===1 ? 'Superusuario' : usuario.id_cargo===2 ? 'Administrador' : usuario.id_cargo===3
+        ? 'Trabajador' : usuario.id_cargo===4 ? 'Cliente' : 'Usuario' %>
+    </span>
+    <i class="fas fa-user-circle" style="font-size: 1.5rem; color: #3498db;"></i>
   </div>
 </header>

@@ -165,3 +165,29 @@ document.querySelector('.menu-toggle')?.addEventListener('click', () => {
 document.querySelector('.sidebar-toggle')?.addEventListener('click', () => {
   document.querySelector('.sidebar')?.classList.toggle('collapsed');
 });
+
+document.addEventListener("DOMContentLoaded", function() {
+    const toggleBtn = document.getElementById("menu-toggle");
+    const sidebarToggleBtn = document.querySelector(".sidebar-toggle"); // El botón que está dentro del sidebar
+    
+    const sidebar = document.querySelector(".sidebar");
+    const mainContent = document.querySelector(".main-content");
+    const navbar = document.querySelector(".navbar");
+
+    // Función para alternar el menú
+    function toggleMenu() {
+        sidebar.classList.toggle("collapsed");
+        mainContent.classList.toggle("collapsed");
+        navbar.classList.toggle("collapsed");
+    }
+
+    // Evento para el botón del Navbar
+    if (toggleBtn) {
+        toggleBtn.addEventListener("click", toggleMenu);
+    }
+
+    // Evento para el botón del Sidebar (móvil o interno)
+    if (sidebarToggleBtn) {
+        sidebarToggleBtn.addEventListener("click", toggleMenu);
+    }
+});

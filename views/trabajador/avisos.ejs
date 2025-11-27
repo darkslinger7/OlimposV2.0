@@ -1,0 +1,58 @@
+<%- include('../partials/header') %>
+<%- include('../partials/sidebar_trabajador') %>
+<%- include('../partials/navbar', { titulo: 'Tablón de Anuncios', icono: 'fa-bullhorn', usuario }) %>
+
+<style>
+    .notice-card {
+        background: white; border-radius: 8px; padding: 20px;
+        margin-bottom: 20px; border-left: 5px solid #3498db; /* Azul para información */
+        box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+    }
+    .notice-header {
+        display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;
+    }
+    .notice-meta { font-size: 0.85rem; color: #7f8c8d; }
+    .badge-info { background: #3498db; color: white; padding: 2px 8px; border-radius: 10px; font-size: 0.75rem; }
+</style>
+
+<div class="main-content">
+  <main class="content">
+
+    <h3 style="color: #2c3e50; margin-bottom: 20px;">
+        <i class="fas fa-info-circle"></i> Comunicados Generales
+    </h3>
+
+    <% if (avisos.length > 0) { %>
+        <% avisos.forEach(a => { %>
+            <div class="notice-card">
+                <div class="notice-header">
+                    <div>
+                        <span class="badge-info">Información</span>
+                        <h4 style="margin: 5px 0 0 0; color: #2c3e50;"><%= a.titulo %></h4>
+                    </div>
+                    <small class="notice-meta">
+                        <i class="far fa-clock"></i> <%= new Date(a.fecha).toLocaleDateString() %>
+                    </small>
+                </div>
+                
+                <hr style="border: 0; border-top: 1px solid #eee; margin: 10px 0;">
+                
+                <p style="color: #555; line-height: 1.5;">
+                    <%= a.mensaje %>
+                </p>
+                
+                <div style="text-align: right; margin-top: 10px;">
+                    <small style="color: #999;">Publicado por: <%= a.emisor %></small>
+                </div>
+            </div>
+        <% }) %>
+    <% } else { %>
+        <div style="text-align: center; padding: 50px; color: #aaa;">
+            <i class="far fa-newspaper" style="font-size: 3rem; margin-bottom: 15px;"></i>
+            <p>No hay anuncios nuevos por el momento.</p>
+        </div>
+    <% } %>
+
+  </main>
+<%- include('../partials/footer') %>
+</div>
